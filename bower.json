@@ -1,0 +1,22 @@
+{
+  "name": "elemica-suggest",
+  "version": "0.5.0",
+  "authors": [
+    "Matt Farmer <matt@frmr.me>"
+  ],
+  "description": "A lightweight suggestion typeahead library that makes your life better by doing less.",
+  "main": "elemica-suggest.coffee",
+  "keywords": [
+    "suggest",
+    "typeahead"
+  ],
+  "license": "Apache 2",
+  "homepage": "http://github.com/elemica/elemica-suggest",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
