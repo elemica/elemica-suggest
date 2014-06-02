@@ -7,6 +7,20 @@ fs = require 'fs'
 eval(fs.readFileSync('dist/elemica-suggest.js').toString())
 chai.should()
 
+elemicaSuggestionRenderingSpec = (suggestFunction, expectedMarkup, done) ->
+  $containerDiv = $("<div />")
+
+  afterSuggest = ->
+    $containerDiv.html().should.equal(expectedMarkup)
+    done()
+
+  $input = $("<input />").elemicaSuggest
+    suggestFunction: suggestFunction,
+    afterSuggest: afterSuggest
+  $containerDiv.append($input)
+
+  $input.val('bacon').trigger('keyup', {keyCode: 99})
+
 describe 'Suggest', ->
   it 'should extend the jQuery object', ->
     jQuery.fn.elemicaSuggest.should.be.a 'function'
@@ -15,52 +29,22 @@ describe 'Suggest', ->
     expectedMarkup = '<input autocomplete="off" value="bacon"><ul class="suggestions"><li class="active">suggestion 1</li><li>suggestion 2</li></ul>'
     suggestFunction = (searchTerm, populateFn) ->
       populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
-    $containerDiv = $("<div />")
 
-    afterSuggest = ->
-      $containerDiv.html().should.equal(expectedMarkup)
-      done()
-
-    $input = $("<input />").elemicaSuggest
-      suggestFunction: suggestFunction,
-      afterSuggest: afterSuggest
-    $containerDiv.append($input)
-
-    $input.val('bacon').trigger('keyup', {keyCode: 99})
+    elemicaSuggestionRenderingSpec(suggestFunction, expectedMarkup, done)
 
   it 'should correctly provide markup for image suggestions', (done) ->
     expectedMarkup = '<input autocomplete=\"off\" value=\"bacon\"><ul class=\"suggestions\"><li class=\"active\"><img src=\"awesome.gif\">suggestion 1</li><li><img src=\"bacon.gif\">suggestion 2</li></ul>'
     suggestFunction = (searchTerm, populateFn) ->
       populateFn([{display: 'suggestion 1', value: 'suggestion 1', image: 'awesome.gif'}, {display: 'suggestion 2', value: 'suggestion 2', image: 'bacon.gif'}])
-    $containerDiv = $("<div />")
 
-    afterSuggest = ->
-      $containerDiv.html().should.equal(expectedMarkup)
-      done()
-
-    $input = $("<input />").elemicaSuggest
-      suggestFunction: suggestFunction,
-      afterSuggest: afterSuggest
-    $containerDiv.append($input)
-
-    $input.val('bacon').trigger('keyup', {keyCode: 99})
+    elemicaSuggestionRenderingSpec(suggestFunction, expectedMarkup, done)
 
   it 'should correctly provide markup for metadata suggestions', (done) ->
     expectedMarkup = '<input autocomplete=\"off\" value=\"bacon\"><ul class=\"suggestions\"><li class=\"active\">suggestion 1<span class=\"metadata\">a good suggestion</span></li><li>suggestion 2<span class=\"metadata\">a great suggestion</span></li></ul>'
     suggestFunction = (searchTerm, populateFn) ->
       populateFn([{display: 'suggestion 1', value: 'suggestion 1', metadata: 'a good suggestion'}, {display: 'suggestion 2', value: 'suggestion 2', metadata: 'a great suggestion'}])
-    $containerDiv = $("<div />")
 
-    afterSuggest = ->
-      $containerDiv.html().should.equal(expectedMarkup)
-      done()
-
-    $input = $("<input />").elemicaSuggest
-      suggestFunction: suggestFunction,
-      afterSuggest: afterSuggest
-    $containerDiv.append($input)
-
-    $input.val('bacon').trigger('keyup', {keyCode: 99})
+    elemicaSuggestionRenderingSpec(suggestFunction, expectedMarkup, done)
 
   it 'should correctly provide markup for suggestions with all options', (done) ->
     expectedMarkup = '<input autocomplete=\"off\" value=\"bacon\"><ul class=\"suggestions\"><li class=\"active\"><img src=\"zztop.gif\">suggestion 1<span class=\"metadata\">a good suggestion</span></li><li><img src=\"walnut.jpg\">suggestion 2<span class=\"metadata\">a great suggestion</span></li></ul>'
@@ -69,16 +53,6 @@ describe 'Suggest', ->
         {display: 'suggestion 1', value: 'suggestion 1', image: 'zztop.gif', metadata: 'a good suggestion'},
         {display: 'suggestion 2', value: 'suggestion 2', image: 'walnut.jpg', metadata: 'a great suggestion'}
       ])
-    $containerDiv = $("<div />")
 
-    afterSuggest = ->
-      $containerDiv.html().should.equal(expectedMarkup)
-      done()
-
-    $input = $("<input />").elemicaSuggest
-      suggestFunction: suggestFunction,
-      afterSuggest: afterSuggest
-    $containerDiv.append($input)
-
-    $input.val('bacon').trigger('keyup', {keyCode: 99})
+    elemicaSuggestionRenderingSpec(suggestFunction, expectedMarkup, done)
 
