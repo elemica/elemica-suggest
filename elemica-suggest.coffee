@@ -25,6 +25,7 @@
 # - noMatchesMessage: The message that should be displayed when the suggestFunction returns
 #   no hits. It will default to the contents of the data-no-matches attribute on the target
 #   element of elemicaSuggest if not specified.
+# - afterSuggest: A function to be invoked after suggestions have been populated.
 ##
 (($) ->
   $.fn.extend
