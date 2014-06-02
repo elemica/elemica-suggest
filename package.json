@@ -2,7 +2,11 @@
   "devDependencies": {
     "jquery": "1.11.1",
     "mocha": "*",
-    "chai": "*"
+    "chai": "*",
+    "coffee-script": "*",
+    "jsdom": "*"
   },
-  "test": "node_modules/mocha/bin/mocha -R spec"
+  "scripts": {
+    "test": "node_modules/mocha/bin/mocha --compilers coffee:coffee-script/register -u tdd -R spec"
+  }
 }
