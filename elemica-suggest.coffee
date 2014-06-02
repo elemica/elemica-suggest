@@ -44,6 +44,8 @@
 
       noMatchesMessage = options.noMatchesMessage || $(@first()).data('no-matches')
 
+      afterSuggest = options.afterSuggest || () ->
+
       removeSuggestions = (element) ->
         $(element).siblings(".suggestions").remove()
 
@@ -125,6 +127,8 @@
               .text(noMatchesMessage)
               .addClass("invalid-text")
           )
+
+        afterSuggest()
 
       @each ->
         $(this).attr 'autocomplete', 'off'
