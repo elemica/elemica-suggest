@@ -15,6 +15,7 @@
 #   - display: The display text for the suggestion.
 #   - value: The value to be stuffed into valueInput if the suggestion is selected
 #   - image: (optional) An image associated with the suggestion.
+#   - metadata: (optional) Some additional metadata text associated with the suggestion.
 # - valueInput: A jQuery object representing the DOM node which will receive
 #   the value selected by the user.
 # - selectionIndicatorTarget: A function that takes in a jQuery object that represents
@@ -108,6 +109,11 @@
               if suggestion.image?
                 $suggestionLi.prepend(
                   $("<img />").attr("src", suggestion.image)
+                )
+
+              if suggestion.metadata?
+                $suggestionLi.append(
+                  $("<span />").text(suggestion.metadata).addClass("metadata")
                 )
 
               $suggestionLi
