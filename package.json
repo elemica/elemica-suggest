@@ -7,6 +7,8 @@
     "jsdom": "*"
   },
   "scripts": {
+    "dist": "node_modules/coffee-script/bin/coffee -o dist elemica-suggest.coffee",
+    "pretest": "npm run-script dist",
     "test": "node_modules/mocha/bin/mocha --compilers coffee:coffee-script/register -u tdd -R spec"
   }
 }
