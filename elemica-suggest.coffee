@@ -10,7 +10,11 @@
 # - suggestFunction: The function that takes in a string and a callback
 #   retrieves some suggestions and invokes the callback passing in the
 #   suggestions as a parameter. The return value of this function should be
-#   an array of objects with the keys "display" and "value".
+#   an array of suggestion objects, where suggestion objects contain the following
+#   keys:
+#   - display: The display text for the suggestion.
+#   - value: The value to be stuffed into valueInput if the suggestion is selected
+#   - image: (optional) An image associated with the suggestion.
 # - valueInput: A jQuery object representing the DOM node which will receive
 #   the value selected by the user.
 # - selectionIndicatorTarget: A function that takes in a jQuery object that represents
@@ -88,7 +92,7 @@
         $suggestionsList.empty().append(
           for suggestion in suggestions
             do (suggestion) ->
-              $("<li />").text(suggestion.display)
+              $suggestionLi = $("<li />").text(suggestion.display)
                 .on('mousedown element-selected', ->
                   $(element).val( suggestion.display )
                   $valueInput.val( suggestion.value )
@@ -100,6 +104,13 @@
                     .end()
                     .addClass("active")
                 )
+
+              if suggestion.image?
+                $suggestionLi.prepend(
+                  $("<img />").attr("src", suggestion.image)
+                )
+
+              $suggestionLi
         ).find("li:first-child").addClass("active")
 
         if suggestions.length == 0
