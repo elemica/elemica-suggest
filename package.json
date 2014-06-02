@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "jquery": "1.11.1",
+    "mocha": "*",
+    "chai": "*"
+  },
+  "test": "node_modules/mocha/bin/mocha -R spec"
+}
