@@ -3,7 +3,7 @@
   (function($) {
     return $.fn.extend({
       elemicaSuggest: function(options) {
-        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, highlightAnother, highlightNext, highlightPrevious, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
+        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSuggest, highlightAnother, highlightNext, highlightPrevious, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
         if (options == null) {
           options = {};
         }
@@ -20,6 +20,7 @@
           return $target;
         };
         noMatchesMessage = options.noMatchesMessage || $(this.first()).data('no-matches');
+        afterSuggest = options.afterSuggest || function() {};
         removeSuggestions = function(element) {
           return $(element).siblings(".suggestions").remove();
         };
@@ -81,8 +82,9 @@
               return _results;
             })()).find("li:first-child").addClass("active");
             if (suggestions.length === 0) {
-              return $suggestionsList.append($("<li />").text(noMatchesMessage).addClass("invalid-text"));
+              $suggestionsList.append($("<li />").text(noMatchesMessage).addClass("invalid-text"));
             }
+            return afterSuggest();
           };
         };
         return this.each(function() {
