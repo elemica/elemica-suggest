@@ -10,7 +10,12 @@
 # - suggestFunction: The function that takes in a string and a callback
 #   retrieves some suggestions and invokes the callback passing in the
 #   suggestions as a parameter. The return value of this function should be
-#   an array of objects with the keys "display" and "value".
+#   an array of suggestion objects, where suggestion objects contain the following
+#   keys:
+#   - display: The display text for the suggestion.
+#   - value: The value to be stuffed into valueInput if the suggestion is selected
+#   - image: (optional) An image associated with the suggestion.
+#   - metadata: (optional) Some additional metadata text associated with the suggestion.
 # - valueInput: A jQuery object representing the DOM node which will receive
 #   the value selected by the user.
 # - selectionIndicatorTarget: A function that takes in a jQuery object that represents
@@ -20,6 +25,7 @@
 # - noMatchesMessage: The message that should be displayed when the suggestFunction returns
 #   no hits. It will default to the contents of the data-no-matches attribute on the target
 #   element of elemicaSuggest if not specified.
+# - afterSuggest: A function to be invoked after suggestions have been populated.
 ##
 (($) ->
   $.fn.extend
@@ -38,6 +44,8 @@
       selectionIndicatorTarget = options.selectionIndicatorTarget || ($target) -> $target
 
       noMatchesMessage = options.noMatchesMessage || $(@first()).data('no-matches')
+
+      afterSuggest = options.afterSuggest || () ->
 
       removeSuggestions = (element) ->
         $(element).siblings(".suggestions").remove()
@@ -88,7 +96,7 @@
         $suggestionsList.empty().append(
           for suggestion in suggestions
             do (suggestion) ->
-              $("<li />").text(suggestion.display)
+              $suggestionLi = $("<li />").text(suggestion.display)
                 .on('mousedown element-selected', ->
                   $(element).val( suggestion.display )
                   $valueInput.val( suggestion.value )
@@ -100,6 +108,18 @@
                     .end()
                     .addClass("active")
                 )
+
+              if suggestion.image?
+                $suggestionLi.prepend(
+                  $("<img />").attr("src", suggestion.image)
+                )
+
+              if suggestion.metadata?
+                $suggestionLi.append(
+                  $("<span />").text(suggestion.metadata).addClass("metadata")
+                )
+
+              $suggestionLi
         ).find("li:first-child").addClass("active")
 
         if suggestions.length == 0
@@ -108,6 +128,8 @@
               .text(noMatchesMessage)
               .addClass("invalid-text")
           )
+
+        afterSuggest()
 
       @each ->
         $(this).attr 'autocomplete', 'off'

@@ -1,6 +1,6 @@
 {
   "name": "elemica-suggest",
-  "version": "0.5.0",
+  "version": "0.6.0-SNAPSHOT",
   "authors": [
     "Matt Farmer <matt@frmr.me>"
   ],
@@ -18,5 +18,8 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "jquery": ">= 1.10.0"
+  }
 }
