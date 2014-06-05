@@ -52,6 +52,7 @@ to style that `ul` however you like.
 
 If you want to use browser's Dev tools to inspect generated HTML you must disable support for `blur` event
 as in other case the whole generated HTML content disappear as soon as you switch to the Dev tools.
+
 To disable this, lunch the below command in JavaScript console:
 
 ```javascript
