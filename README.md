@@ -48,6 +48,18 @@ containing the suggestions returned by your API below the input. For example,
 May be added below the input if the suggestFunction returns those values. You have the freedom
 to style that `ul` however you like.
 
+### Using Dev Tools
+
+If you want to use browser's Dev tools to inspect generated HTML you must disable support for `blur` event
+as in other case the whole generated HTML content disappear as soon as you switch to the Dev tools.
+To disable this, lunch the below command in JavaScript console:
+
+```javascript
+$("#user-name-typeahead").off('blur')
+```
+
+Thus will allow switching to the Dev tools and inspect the generated content.
+
 ## Suggestion Format
 
 In your `suggestFunction` that you pass into `elemicaSuggest`, you must provide a function
