@@ -1,5 +1,7 @@
 # elemica-suggest
 
+[![Build Status](https://travis-ci.org/elemica/elemica-suggest.svg)](https://travis-ci.org/elemica/elemica-suggest)
+
 This is elemica-suggest, a simple typeahead/suggest library that makes your life easy by doing less
 instead of more. Other suggestion and typeahead libraries provide a lot of drop-in styling that you
 may or may not want in your application. If you do want that styling, go for it. If you don't, we
