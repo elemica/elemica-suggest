@@ -56,3 +56,19 @@ describe 'Suggest', ->
 
     elemicaSuggestionRenderingSpec(suggestFunction, expectedMarkup, done)
 
+  it 'should correctly invoke afterSelect after a selection is made by the user', (done) ->
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+
+    $input = $("<input />").elemicaSuggest
+      suggestFunction: suggestFunction
+      afterSelect: (suggestion) ->
+        suggestion.display.should.equal("suggestion 1")
+        suggestion.value.should.equal("suggestion 1")
+        done()
+
+    $containerDiv = $("<div />").append($input)
+    $input.val('bacon').trigger('keyup', {keyCode: 99})
+
+    $containerDiv.find(".suggestions .active").trigger('element-selected')
+

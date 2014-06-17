@@ -3,7 +3,7 @@
   (function($) {
     return $.fn.extend({
       elemicaSuggest: function(options) {
-        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSuggest, highlightAnother, highlightNext, highlightPrevious, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
+        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, highlightAnother, highlightNext, highlightPrevious, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
         if (options == null) {
           options = {};
         }
@@ -21,6 +21,7 @@
         };
         noMatchesMessage = options.noMatchesMessage || $(this.first()).data('no-matches');
         afterSuggest = options.afterSuggest || function() {};
+        afterSelect = options.afterSelect || function() {};
         removeSuggestions = function(element) {
           return $(element).siblings(".suggestions").remove();
         };
@@ -66,7 +67,8 @@
                   var $suggestionLi;
                   $suggestionLi = $("<li />").text(suggestion.display).on('mousedown element-selected', function() {
                     $(element).val(suggestion.display);
-                    return $valueInput.val(suggestion.value);
+                    $valueInput.val(suggestion.value);
+                    return afterSelect(suggestion);
                   }).on('mouseover', function() {
                     return $(this).siblings().removeClass("active").end().addClass("active");
                   });

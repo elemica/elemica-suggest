@@ -26,6 +26,8 @@
 #   no hits. It will default to the contents of the data-no-matches attribute on the target
 #   element of elemicaSuggest if not specified.
 # - afterSuggest: A function to be invoked after suggestions have been populated.
+# - afterSelect: A function to be invoked after a selection has been made. Will pass in the entire
+#   suggestion object that was selected by the user.
 ##
 (($) ->
   $.fn.extend
@@ -46,6 +48,8 @@
       noMatchesMessage = options.noMatchesMessage || $(@first()).data('no-matches')
 
       afterSuggest = options.afterSuggest || () ->
+
+      afterSelect = options.afterSelect || () ->
 
       removeSuggestions = (element) ->
         $(element).siblings(".suggestions").remove()
@@ -100,6 +104,7 @@
                 .on('mousedown element-selected', ->
                   $(element).val( suggestion.display )
                   $valueInput.val( suggestion.value )
+                  afterSelect( suggestion )
                 )
                 .on('mouseover', ->
                   $(this)
