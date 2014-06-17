@@ -1,3 +1,7 @@
+###
+elemicaSuggest 0.7.0-SNAPSHOT.
+(c)2014 Elemica - Licensed under the terms of the Apache 2.0 License.
+###
 ##
 # elemicaSuggest - Simple typeahead suggestions.
 #
