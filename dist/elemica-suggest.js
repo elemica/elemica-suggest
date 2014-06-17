@@ -3,7 +3,7 @@
   (function($) {
     return $.fn.extend({
       elemicaSuggest: function(options) {
-        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSuggest, highlightAnother, highlightNext, highlightPrevious, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
+        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSuggest, highlightAnother, highlightNext, highlightPrevious, minimumSearchTermLength, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
         if (options == null) {
           options = {};
         }
@@ -15,6 +15,7 @@
         suggestFunction = options.suggestFunction || function(term, _) {
           return typeof console !== "undefined" && console !== null ? console.warn("No suggest function defined.") : void 0;
         };
+        minimumSearchTermLength = options.minimumSearchTermLength || 2;
         $valueInput = options.valueInput || $("<input />");
         selectionIndicatorTarget = options.selectionIndicatorTarget || function($target) {
           return $target;
@@ -122,7 +123,7 @@
                   $target = $(event.target);
                   selectionIndicatorTarget($target).removeClass("has-selection");
                   searchTerm = $.trim($target.val());
-                  if (searchTerm.length > 1) {
+                  if (searchTerm.length >= minimumSearchTermLength) {
                     return suggestFunction(searchTerm, populateSuggestions(_this));
                   } else {
                     return removeSuggestions(_this);
