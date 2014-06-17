@@ -82,6 +82,8 @@ The following options are available on the elemicaSuggest function:
   - metadata: (optional) Some additional metadata text associated with the suggestion.
 - valueInput: A jQuery object representing the DOM node which will receive
   the value selected by the user.
+- minimumSearchTermLength: (optional) The minimum number of characters the end-user needs
+  to type in the text box before elemica-suggest starts making suggestions.
 - selectionIndicatorTarget: (optional) A function that takes in a jQuery object that represents
   the input and operates on that object to return a jQuery object of the element(s)
   that will receive the has-selection CSS class when a selection is made. By default
