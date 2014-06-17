@@ -94,7 +94,8 @@
           $(this).on('blur', function(event) {
             removeSuggestions(event.target);
             if ($valueInput.val() === "") {
-              return $(event.target).val("");
+              $(event.target).val("");
+              return afterSelect(null);
             }
           });
           $(this).on('keydown', (function(_this) {
@@ -105,7 +106,8 @@
                 return selectHighlighted(_this);
               } else if (event.keyCode === BACKSPACE && $valueInput.val() !== "") {
                 $valueInput.val("");
-                return $(event.target).val("");
+                $(event.target).val("");
+                return afterSelect(null);
               }
             };
           })(this));

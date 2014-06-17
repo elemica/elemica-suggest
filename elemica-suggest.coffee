@@ -144,6 +144,7 @@
 
           if $valueInput.val() == ""
             $(event.target).val("")
+            afterSelect(null)
 
         $(this).on 'keydown', (event) =>
           if event.keyCode == UP_ARROW || event.keyCode == DOWN_ARROW || event.keyCode == ENTER
@@ -153,6 +154,7 @@
           else if event.keyCode == BACKSPACE && $valueInput.val() != ""
             $valueInput.val("")
             $(event.target).val("")
+            afterSelect(null)
 
         $(this).on 'keyup', (event) =>
           switch event.keyCode

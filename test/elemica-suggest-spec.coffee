@@ -1,4 +1,5 @@
 chai = require 'chai'
+assert = require("assert")
 jsdom = require 'jsdom'
 jQuery = require('jquery')(jsdom.jsdom().createWindow())
 $ = jQuery
@@ -19,7 +20,7 @@ elemicaSuggestionRenderingSpec = (suggestFunction, expectedMarkup, done) ->
     afterSuggest: afterSuggest
   $containerDiv.append($input)
 
-  $input.val('bacon').trigger('keyup', {keyCode: 99})
+  $input.val('bacon').trigger('keyup')
 
 describe 'Suggest', ->
   it 'should extend the jQuery object', ->
@@ -56,7 +57,7 @@ describe 'Suggest', ->
 
     elemicaSuggestionRenderingSpec(suggestFunction, expectedMarkup, done)
 
-  it 'should correctly invoke afterSelect after a selection is made by the user', (done) ->
+  it 'should invoke afterSelect with the selected suggestion after a selection is made', (done) ->
     suggestFunction = (searchTerm, populateFn) ->
       populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
 
@@ -68,7 +69,30 @@ describe 'Suggest', ->
         done()
 
     $containerDiv = $("<div />").append($input)
-    $input.val('bacon').trigger('keyup', {keyCode: 99})
+    $input.val('bacon').trigger('keyup')
 
     $containerDiv.find(".suggestions .active").trigger('element-selected')
 
+  it 'should invoke afterSelect with null after a selection is cleared', (done) ->
+    invocationCount = 0
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+
+    $input = $("<input />")
+    $input.elemicaSuggest
+      suggestFunction: suggestFunction
+      afterSelect: (suggestion) ->
+        invocationCount++
+
+        if invocationCount == 2
+          # chai existence testing appears to be broken...
+          assert.equal(suggestion, null)
+          done()
+        else
+          keydownEvent = $.Event 'keydown'
+          keydownEvent.keyCode = 8
+          $input.trigger keydownEvent
+
+    $containerDiv = $("<div />").append($input)
+    $input.val('bacon').trigger('keyup')
+    $containerDiv.find(".suggestions .active").trigger('element-selected')
