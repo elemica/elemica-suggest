@@ -34,6 +34,8 @@ elemicaSuggest 0.7.0-SNAPSHOT.
 #   suggestion object that was selected by the user.
 ##
 (($) ->
+  noop = ->
+
   $.fn.extend
     elemicaSuggest: (options = {}) ->
       UP_ARROW = 38
@@ -51,9 +53,9 @@ elemicaSuggest 0.7.0-SNAPSHOT.
 
       noMatchesMessage = options.noMatchesMessage || $(@first()).data('no-matches')
 
-      afterSuggest = options.afterSuggest || () ->
+      afterSuggest = options.afterSuggest || noop
 
-      afterSelect = options.afterSelect || () ->
+      afterSelect = options.afterSelect || noop
 
       removeSuggestions = (element) ->
         $(element).siblings(".suggestions").remove()

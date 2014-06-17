@@ -7,6 +7,8 @@ elemicaSuggest 0.7.0-SNAPSHOT.
 
 (function() {
   (function($) {
+    var noop;
+    noop = function() {};
     return $.fn.extend({
       elemicaSuggest: function(options) {
         var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, highlightAnother, highlightNext, highlightPrevious, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
@@ -26,8 +28,8 @@ elemicaSuggest 0.7.0-SNAPSHOT.
           return $target;
         };
         noMatchesMessage = options.noMatchesMessage || $(this.first()).data('no-matches');
-        afterSuggest = options.afterSuggest || function() {};
-        afterSelect = options.afterSelect || function() {};
+        afterSuggest = options.afterSuggest || noop;
+        afterSelect = options.afterSelect || noop;
         removeSuggestions = function(element) {
           return $(element).siblings(".suggestions").remove();
         };
