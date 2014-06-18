@@ -122,6 +122,10 @@ The following options are available on the elemicaSuggest function:
   no hits. It will default to the contents of the data-no-matches attribute on the target
   element of elemicaSuggest if not specified.
 - afterSuggest: (optional) A function to be invoked after suggestions have been populated.
+- afterSelect: (optional) A function to be invoked after a selection has been made or cleared. In the
+  event a selection has been made, we pass in the suggestion object representing that suggestion. In
+  the event that a selection has been cleared, we pass in `null`. This callback is invoked on each
+  selection the user makes, including identical selections.
 
 ## Developing
 

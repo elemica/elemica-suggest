@@ -1,4 +1,5 @@
 chai = require 'chai'
+assert = require("assert")
 jsdom = require 'jsdom'
 jQuery = require('jquery')(jsdom.jsdom().createWindow())
 $ = jQuery
@@ -19,7 +20,7 @@ elemicaSuggestionRenderingSpec = (suggestFunction, expectedMarkup, done) ->
     afterSuggest: afterSuggest
   $containerDiv.append($input)
 
-  $input.val('bacon').trigger('keyup', {keyCode: 99})
+  $input.val('bacon').trigger('keyup')
 
 describe 'Suggest', ->
   it 'should extend the jQuery object', ->
@@ -56,3 +57,70 @@ describe 'Suggest', ->
 
     elemicaSuggestionRenderingSpec(suggestFunction, expectedMarkup, done)
 
+  it 'should invoke afterSelect with the selected suggestion after a selection is made', (done) ->
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+
+    $input = $("<input />").elemicaSuggest
+      suggestFunction: suggestFunction
+      afterSelect: (suggestion) ->
+        suggestion.display.should.equal("suggestion 1")
+        suggestion.value.should.equal("suggestion 1")
+        done()
+
+    $containerDiv = $("<div />").append($input)
+    $input.val('bacon').trigger('keyup')
+
+    $containerDiv.find(".suggestions .active").trigger('element-selected')
+
+  it 'should invoke afterSelect with the selected suggestion after an identical selection is made', (done) ->
+    firstSuggestion = undefined
+    invocationCount = 0
+    $input = $("<input />")
+    $containerDiv = $("<div />").append($input)
+
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+
+    makeASelection = ->
+      $input.val('bacon').trigger('keyup')
+      $containerDiv.find(".suggestions .active").trigger('element-selected')
+
+    $input.elemicaSuggest
+      suggestFunction: suggestFunction
+      afterSelect: (suggestion) ->
+        invocationCount++
+
+        if invocationCount == 1
+          firstSuggestion = suggestion
+          makeASelection()
+        else
+          suggestion.display.should.equal(firstSuggestion.display)
+          suggestion.value.should.equal(firstSuggestion.value)
+          done()
+
+    makeASelection()
+
+  it 'should invoke afterSelect with null after a selection is cleared', (done) ->
+    invocationCount = 0
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+
+    $input = $("<input />")
+    $input.elemicaSuggest
+      suggestFunction: suggestFunction
+      afterSelect: (suggestion) ->
+        invocationCount++
+
+        if invocationCount == 2
+          # chai existence testing appears to be broken...
+          assert.equal(suggestion, null)
+          done()
+        else
+          keydownEvent = $.Event 'keydown'
+          keydownEvent.keyCode = 8
+          $input.trigger keydownEvent
+
+    $containerDiv = $("<div />").append($input)
+    $input.val('bacon').trigger('keyup')
+    $containerDiv.find(".suggestions .active").trigger('element-selected')
