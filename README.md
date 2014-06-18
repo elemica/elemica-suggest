@@ -1,5 +1,7 @@
 # elemica-suggest
 
+[![Build Status](https://travis-ci.org/elemica/elemica-suggest.svg)](https://travis-ci.org/elemica/elemica-suggest)
+
 This is elemica-suggest, a simple typeahead/suggest library that makes your life easy by doing less
 instead of more. Other suggestion and typeahead libraries provide a lot of drop-in styling that you
 may or may not want in your application. If you do want that styling, go for it. If you don't, we
@@ -48,6 +50,36 @@ containing the suggestions returned by your API below the input. For example,
 May be added below the input if the suggestFunction returns those values. You have the freedom
 to style that `ul` however you like.
 
+### CSS Classes
+
+The elemica-suggest library is pretty intentionally unstyled when you first drop it in. This
+is an intentional decision. You are the one building your app, and you should be the one to
+dictate what it looks like - typeahead suggestions and all. To facilitate this we use a few
+different CSS classes to help you with your styling.
+
+* **suggestions** is applied to the `ul` that contains the suggestions that are being made.
+* **active** is applied to the `li` inside `ul.suggestions` that is currently selected by the
+  user. A suggestion can become active by the user using the up or down arrow keys or by hovering
+  over the `li` with their mouse.
+* **has-selection** is applied to an element to indicate that a selection has been made. By default
+  this element is the text field itself, but if you have need you can provide a value for the
+  `selectionIndicatorTarget` parameter (see below) and change where this class is applied.
+* **invalid-text** is applied to a suggestion `li` when that suggestion `li` is a message informing
+  the user that there are no matches for their query.
+
+### Using Dev Tools
+
+If you want to use browser's Dev tools to inspect generated HTML you must disable support for `blur` event
+as in other case the whole generated HTML content disappear as soon as you switch to the Dev tools.
+
+To disable this, lunch the below command in JavaScript console:
+
+```javascript
+$("#user-name-typeahead").off('blur')
+```
+
+Thus will allow switching to the Dev tools and inspect the generated content.
+
 ## Suggestion Format
 
 In your `suggestFunction` that you pass into `elemicaSuggest`, you must provide a function
@@ -92,6 +124,10 @@ The following options are available on the elemicaSuggest function:
   no hits. It will default to the contents of the data-no-matches attribute on the target
   element of elemicaSuggest if not specified.
 - afterSuggest: (optional) A function to be invoked after suggestions have been populated.
+- afterSelect: (optional) A function to be invoked after a selection has been made or cleared. In the
+  event a selection has been made, we pass in the suggestion object representing that suggestion. In
+  the event that a selection has been cleared, we pass in `null`. This callback is invoked on each
+  selection the user makes, including identical selections.
 
 ## Developing
 

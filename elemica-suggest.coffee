@@ -1,3 +1,7 @@
+###
+elemicaSuggest 0.7.0-SNAPSHOT.
+(c)2014 Elemica - Licensed under the terms of the Apache 2.0 License.
+###
 ##
 # elemicaSuggest - Simple typeahead suggestions.
 #
@@ -28,8 +32,12 @@
 #   no hits. It will default to the contents of the data-no-matches attribute on the target
 #   element of elemicaSuggest if not specified.
 # - afterSuggest: A function to be invoked after suggestions have been populated.
+# - afterSelect: A function to be invoked after a selection has been made. Will pass in the entire
+#   suggestion object that was selected by the user.
 ##
 (($) ->
+  noop = ->
+
   $.fn.extend
     elemicaSuggest: (options = {}) ->
       UP_ARROW = 38
@@ -49,7 +57,9 @@
 
       noMatchesMessage = options.noMatchesMessage || $(@first()).data('no-matches')
 
-      afterSuggest = options.afterSuggest || () ->
+      afterSuggest = options.afterSuggest || noop
+
+      afterSelect = options.afterSelect || noop
 
       removeSuggestions = (element) ->
         $(element).siblings(".suggestions").remove()
@@ -104,6 +114,7 @@
                 .on('mousedown element-selected', ->
                   $(element).val( suggestion.display )
                   $valueInput.val( suggestion.value )
+                  afterSelect( suggestion )
                 )
                 .on('mouseover', ->
                   $(this)
@@ -143,6 +154,7 @@
 
           if $valueInput.val() == ""
             $(event.target).val("")
+            afterSelect(null)
 
         $(this).on 'keydown', (event) =>
           if event.keyCode == UP_ARROW || event.keyCode == DOWN_ARROW || event.keyCode == ENTER
@@ -152,6 +164,7 @@
           else if event.keyCode == BACKSPACE && $valueInput.val() != ""
             $valueInput.val("")
             $(event.target).val("")
+            afterSelect(null)
 
         $(this).on 'keyup', (event) =>
           switch event.keyCode
