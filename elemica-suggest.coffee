@@ -20,6 +20,8 @@ elemicaSuggest 0.7.0-SNAPSHOT.
 #   - value: The value to be stuffed into valueInput if the suggestion is selected
 #   - image: (optional) An image associated with the suggestion.
 #   - metadata: (optional) Some additional metadata text associated with the suggestion.
+# - minimumSearchTermLength: The minimum number of characters the user is required to type
+#   to initate a typeahead search. Defaults to 2.
 # - valueInput: A jQuery object representing the DOM node which will receive
 #   the value selected by the user.
 # - selectionIndicatorTarget: A function that takes in a jQuery object that represents
@@ -46,6 +48,8 @@ elemicaSuggest 0.7.0-SNAPSHOT.
 
       suggestFunction = options.suggestFunction || (term, _) ->
         console?.warn "No suggest function defined."
+
+      minimumSearchTermLength = options.minimumSearchTermLength || 2
 
       $valueInput = options.valueInput || $("<input />")
 
@@ -176,7 +180,7 @@ elemicaSuggest 0.7.0-SNAPSHOT.
               selectionIndicatorTarget($target).removeClass("has-selection")
               searchTerm = $.trim($target.val())
 
-              if searchTerm.length > 1
+              if searchTerm.length >= minimumSearchTermLength
                 suggestFunction searchTerm, populateSuggestions(this)
               else
                 removeSuggestions(this)
