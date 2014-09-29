@@ -46,6 +46,10 @@ elemicaSuggest 0.7.1-SNAPSHOT.
       TAB = 9
       BACKSPACE = 8
 
+      # This flag indicates that the popup with selection is active
+      # and user is selecting one of the options
+      selectingSuggestion = false
+
       suggestFunction = options.suggestFunction || (term, _) ->
         console?.warn "No suggest function defined."
 
@@ -80,6 +84,8 @@ elemicaSuggest 0.7.1-SNAPSHOT.
         else if ! $currentActive.length
           $(element).parent().find(".suggestions > li:first-child").addClass("active")
 
+        selectingSuggestion = true
+
       highlightNext = (element) ->
         highlightAnother element, ($currentActive) -> $currentActive.next()
 
@@ -97,8 +103,10 @@ elemicaSuggest 0.7.1-SNAPSHOT.
           .trigger("focus")
 
         selectionIndicatorTarget( $(element) ).addClass("has-selection")
+        selectingSuggestion = false
 
       populateSuggestions = (element) -> (suggestions) ->
+        selectingSuggestion = true
         $suggestionsList = $(element).siblings(".suggestions")
 
         if $suggestionsList.length == 0
@@ -157,9 +165,11 @@ elemicaSuggest 0.7.1-SNAPSHOT.
             afterSelect(null)
 
         $(this).on 'keydown', (event) =>
-          if event.keyCode == UP_ARROW || event.keyCode == DOWN_ARROW || event.keyCode == ENTER
-              event.preventDefault()
-          else if event.keyCode == TAB
+          if event.keyCode == UP_ARROW || event.keyCode == DOWN_ARROW
+            event.preventDefault()
+          else if event.keyCode == ENTER && selectingSuggestion
+            event.preventDefault()
+          else if event.keyCode == TAB && selectingSuggestion
             selectHighlighted(this)
           else if event.keyCode == BACKSPACE && $valueInput.val() != ""
             $valueInput.val("")
