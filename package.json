@@ -4,7 +4,7 @@
     "mocha": "*",
     "chai": "*",
     "coffee-script": "*",
-    "jsdom": "*"
+    "jsdom": "0.11.0"
   },
   "scripts": {
     "dist": "node_modules/coffee-script/bin/coffee -o dist elemica-suggest.coffee",
