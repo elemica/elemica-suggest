@@ -11,7 +11,7 @@ elemicaSuggest 0.7.1-SNAPSHOT.
     noop = function() {};
     return $.fn.extend({
       elemicaSuggest: function(options) {
-        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, highlightAnother, highlightNext, highlightPrevious, minimumSearchTermLength, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectingSuggestion, selectionIndicatorTarget, suggestFunction;
+        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, highlightAnother, highlightNext, highlightPrevious, isSelectingSuggestion, minimumSearchTermLength, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
         if (options == null) {
           options = {};
         }
@@ -20,7 +20,9 @@ elemicaSuggest 0.7.1-SNAPSHOT.
         ENTER = 13;
         TAB = 9;
         BACKSPACE = 8;
-        selectingSuggestion = false;
+        isSelectingSuggestion = function() {
+          return $(".suggestions").is(":visible");
+        };
         suggestFunction = options.suggestFunction || function(term, _) {
           return typeof console !== "undefined" && console !== null ? console.warn("No suggest function defined.") : void 0;
         };
@@ -41,11 +43,10 @@ elemicaSuggest 0.7.1-SNAPSHOT.
           $nextElement = otherCalcFunc($currentActive);
           if ($currentActive.length && $nextElement.length) {
             $currentActive.removeClass("active");
-            $nextElement.addClass("active");
+            return $nextElement.addClass("active");
           } else if (!$currentActive.length) {
-            $(element).parent().find(".suggestions > li:first-child").addClass("active");
+            return $(element).parent().find(".suggestions > li:first-child").addClass("active");
           }
-          return selectingSuggestion = true;
         };
         highlightNext = function(element) {
           return highlightAnother(element, function($currentActive) {
@@ -59,13 +60,11 @@ elemicaSuggest 0.7.1-SNAPSHOT.
         };
         selectHighlighted = function(element) {
           $(element).parent().find(".suggestions .active").trigger("element-selected").end().end().trigger("blur").trigger("focus");
-          selectionIndicatorTarget($(element)).addClass("has-selection");
-          return selectingSuggestion = false;
+          return selectionIndicatorTarget($(element)).addClass("has-selection");
         };
         populateSuggestions = function(element) {
           return function(suggestions) {
             var $suggestionsList, suggestion;
-            selectingSuggestion = true;
             $suggestionsList = $(element).siblings(".suggestions");
             if ($suggestionsList.length === 0) {
               $suggestionsList = $("<ul />").addClass("suggestions");
@@ -115,9 +114,9 @@ elemicaSuggest 0.7.1-SNAPSHOT.
             return function(event) {
               if (event.keyCode === UP_ARROW || event.keyCode === DOWN_ARROW) {
                 return event.preventDefault();
-              } else if (event.keyCode === ENTER && selectingSuggestion) {
+              } else if (event.keyCode === ENTER && isSelectingSuggestion()) {
                 return event.preventDefault();
-              } else if (event.keyCode === TAB && selectingSuggestion) {
+              } else if (event.keyCode === TAB && isSelectingSuggestion()) {
                 return selectHighlighted(_this);
               } else if (event.keyCode === BACKSPACE && $valueInput.val() !== "") {
                 $valueInput.val("");
