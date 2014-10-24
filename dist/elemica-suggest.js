@@ -11,7 +11,7 @@ elemicaSuggest 0.7.1-SNAPSHOT.
     noop = function() {};
     return $.fn.extend({
       elemicaSuggest: function(options) {
-        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, highlightAnother, highlightNext, highlightPrevious, minimumSearchTermLength, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
+        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, highlightAnother, highlightNext, highlightPrevious, isSelectingSuggestion, minimumSearchTermLength, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
         if (options == null) {
           options = {};
         }
@@ -20,6 +20,9 @@ elemicaSuggest 0.7.1-SNAPSHOT.
         ENTER = 13;
         TAB = 9;
         BACKSPACE = 8;
+        isSelectingSuggestion = function() {
+          return $(".suggestions").is(":visible");
+        };
         suggestFunction = options.suggestFunction || function(term, _) {
           return typeof console !== "undefined" && console !== null ? console.warn("No suggest function defined.") : void 0;
         };
@@ -109,9 +112,11 @@ elemicaSuggest 0.7.1-SNAPSHOT.
           });
           $(this).on('keydown', (function(_this) {
             return function(event) {
-              if (event.keyCode === UP_ARROW || event.keyCode === DOWN_ARROW || event.keyCode === ENTER) {
+              if (event.keyCode === UP_ARROW || event.keyCode === DOWN_ARROW) {
                 return event.preventDefault();
-              } else if (event.keyCode === TAB) {
+              } else if (event.keyCode === ENTER && isSelectingSuggestion()) {
+                return event.preventDefault();
+              } else if (event.keyCode === TAB && isSelectingSuggestion()) {
                 return selectHighlighted(_this);
               } else if (event.keyCode === BACKSPACE && $valueInput.val() !== "") {
                 $valueInput.val("");

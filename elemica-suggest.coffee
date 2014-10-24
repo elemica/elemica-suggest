@@ -46,6 +46,10 @@ elemicaSuggest 0.7.1-SNAPSHOT.
       TAB = 9
       BACKSPACE = 8
 
+      # This function returns true if selection box is active
+      # and user is selecting one of the options
+      isSelectingSuggestion = -> $(".suggestions").is(":visible")
+
       suggestFunction = options.suggestFunction || (term, _) ->
         console?.warn "No suggest function defined."
 
@@ -157,9 +161,11 @@ elemicaSuggest 0.7.1-SNAPSHOT.
             afterSelect(null)
 
         $(this).on 'keydown', (event) =>
-          if event.keyCode == UP_ARROW || event.keyCode == DOWN_ARROW || event.keyCode == ENTER
-              event.preventDefault()
-          else if event.keyCode == TAB
+          if event.keyCode == UP_ARROW || event.keyCode == DOWN_ARROW
+            event.preventDefault()
+          else if event.keyCode == ENTER && isSelectingSuggestion()
+            event.preventDefault()
+          else if event.keyCode == TAB && isSelectingSuggestion()
             selectHighlighted(this)
           else if event.keyCode == BACKSPACE && $valueInput.val() != ""
             $valueInput.val("")
