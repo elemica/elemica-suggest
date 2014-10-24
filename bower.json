@@ -2,7 +2,8 @@
   "name": "elemica-suggest",
   "version": "0.7.1-SNAPSHOT",
   "authors": [
-    "Matt Farmer <matt@frmr.me>"
+    "Matt Farmer <matt@frmr.me>",
+    "Łukasz Lenart <lukasz@softwaremill.pl>"
   ],
   "description": "A lightweight suggestion typeahead library that makes your life better by doing less.",
   "main": "elemica-suggest.coffee",
