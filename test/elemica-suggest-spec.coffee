@@ -124,3 +124,32 @@ describe 'Suggest', ->
     $containerDiv = $("<div />").append($input)
     $input.val('bacon').trigger('keyup')
     $containerDiv.find(".suggestions .active").trigger('element-selected')
+
+  it 'should clear typeahead input by default when no valid selection was made', ->
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+    
+    $input = $("<input />")
+    $input.elemicaSuggest
+      suggestFunction: suggestFunction
+    
+    $input.val('bacon').trigger('keyup')
+    $input.val().should.equal('bacon')
+    
+    $input.trigger('blur')
+    $input.val().should.equal('')
+    
+  it 'should not clear typehead input with clearIncompleteSearchInput=false when no valid selection was made', ->
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])      
+        
+    $input = $("<input />")
+    $input.elemicaSuggest
+      suggestFunction: suggestFunction
+      clearIncompleteSearchInput: false
+        
+    $input.val('bacon').trigger('keyup')
+    $input.val().should.equal('bacon')
+    
+    $input.trigger('blur')
+    $input.val().should.equal('bacon')

@@ -11,7 +11,7 @@ elemicaSuggest 0.7.1-SNAPSHOT.
     noop = function() {};
     return $.fn.extend({
       elemicaSuggest: function(options) {
-        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, highlightAnother, highlightNext, highlightPrevious, isSelectingSuggestion, minimumSearchTermLength, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
+        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, clearIncompleteSearchInput, highlightAnother, highlightNext, highlightPrevious, isSelectingSuggestion, minimumSearchTermLength, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
         if (options == null) {
           options = {};
         }
@@ -27,6 +27,7 @@ elemicaSuggest 0.7.1-SNAPSHOT.
           return typeof console !== "undefined" && console !== null ? console.warn("No suggest function defined.") : void 0;
         };
         minimumSearchTermLength = options.minimumSearchTermLength || 2;
+        clearIncompleteSearchInput = options.clearIncompleteSearchInput != null ? options.clearIncompleteSearchInput : true;
         $valueInput = options.valueInput || $("<input />");
         selectionIndicatorTarget = options.selectionIndicatorTarget || function($target) {
           return $target;
@@ -106,7 +107,9 @@ elemicaSuggest 0.7.1-SNAPSHOT.
           $(this).on('blur', function(event) {
             removeSuggestions(event.target);
             if ($valueInput.val() === "") {
-              $(event.target).val("");
+              if (clearIncompleteSearchInput) {
+                $(event.target).val("");
+              }
               return afterSelect(null);
             }
           });
