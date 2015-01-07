@@ -114,8 +114,6 @@ The following options are available on the elemicaSuggest function:
   - metadata: (optional) Some additional metadata text associated with the suggestion.
 - valueInput: A jQuery object representing the DOM node which will receive
   the value selected by the user.
-- clearIncompleteSearchInput: (optional) Indicates whether typeahead input should be cleared
-  on focus lost if one of the suggested values was not selected. Defaults to 'true'.
 - minimumSearchTermLength: (optional) The minimum number of characters the end-user needs
   to type in the text box before elemica-suggest starts making suggestions.
 - selectionIndicatorTarget: (optional) A function that takes in a jQuery object that represents
@@ -130,6 +128,9 @@ The following options are available on the elemicaSuggest function:
   event a selection has been made, we pass in the suggestion object representing that suggestion. In
   the event that a selection has been cleared, we pass in `null`. This callback is invoked on each
   selection the user makes, including identical selections.
+- noSuggestionMatched: (optional) A function to be invoked after user left typeahead input and no suggestion
+  matched entered value. If function returns `true`, input will be cleared. That's the default
+  behaviour. If function return `false`, input will remain filled.
 
 ## Developing
 

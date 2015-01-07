@@ -24,8 +24,6 @@ elemicaSuggest 0.7.1-SNAPSHOT.
 #   to initate a typeahead search. Defaults to 2.
 # - valueInput: A jQuery object representing the DOM node which will receive
 #   the value selected by the user.
-# - clearIncompleteSearchInput: (optional) Indicates whether typeahead input should be cleared
-#   on focus lost if one of the suggested values was not selected. Defaults to 'true'.
 # - selectionIndicatorTarget: A function that takes in a jQuery object that represents
 #   the input and operates on that object to return a jQuery object of the element(s)
 #   that will receive the has-selection CSS class when a selection is made. By default
@@ -36,6 +34,9 @@ elemicaSuggest 0.7.1-SNAPSHOT.
 # - afterSuggest: A function to be invoked after suggestions have been populated.
 # - afterSelect: A function to be invoked after a selection has been made. Will pass in the entire
 #   suggestion object that was selected by the user.
+# - noSuggestionMatched: (optional) A function to be invoked after user left typeahead input and no
+#   suggestion matched entered value. If function returns true, input will be cleared. That's the
+#   default behaviour. If function return false, input will remain filled.
 ##
 (($) ->
   noop = ->
@@ -56,11 +57,6 @@ elemicaSuggest 0.7.1-SNAPSHOT.
         console?.warn "No suggest function defined."
 
       minimumSearchTermLength = options.minimumSearchTermLength || 2
-      
-      clearIncompleteSearchInput = if options.clearIncompleteSearchInput?
-        options.clearIncompleteSearchInput
-      else
-        true
 
       $valueInput = options.valueInput || $("<input />")
 
@@ -71,6 +67,8 @@ elemicaSuggest 0.7.1-SNAPSHOT.
       afterSuggest = options.afterSuggest || noop
 
       afterSelect = options.afterSelect || noop
+      
+      noSuggestionMatched = options.noSuggestionMatched || -> true
 
       removeSuggestions = (element) ->
         $(element).siblings(".suggestions").remove()
@@ -164,7 +162,7 @@ elemicaSuggest 0.7.1-SNAPSHOT.
           removeSuggestions event.target
 
           if $valueInput.val() == ""
-            $(event.target).val("") if clearIncompleteSearchInput
+            $(event.target).val("") if noSuggestionMatched()
             afterSelect(null)
 
         $(this).on 'keydown', (event) =>
