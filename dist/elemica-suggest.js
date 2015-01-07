@@ -107,10 +107,12 @@ elemicaSuggest 0.7.1-SNAPSHOT.
         return this.each(function() {
           $(this).attr('autocomplete', 'off');
           $(this).on('blur', function(event) {
-            removeSuggestions(event.target);
+            var $target;
+            $target = $(event.target);
+            removeSuggestions($target);
             if ($valueInput.val() === "") {
-              if (noSuggestionMatched()) {
-                $(event.target).val("");
+              if (noSuggestionMatched($target.val())) {
+                $target.val("");
               }
               return afterSelect(null);
             }

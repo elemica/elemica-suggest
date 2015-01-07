@@ -127,14 +127,16 @@ describe 'Suggest', ->
 
   it 'should invoke noSuggestionMatched callback if no valid selection was made', (done) ->
     suggestFunction = (searchTerm, populateFn) ->
-      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])      
+      populateFn([{display: 'bacon', value: 'bacon'}])
           
     $input = $("<input />")
     $input.elemicaSuggest
       suggestFunction: suggestFunction
-      noSuggestionMatched: -> done()
+      noSuggestionMatched: (value) -> 
+        value.should.equal('lol')
+        done()
           
-    $input.val('suggestion 1').trigger('keyup')
+    $input.val('lol').trigger('keyup')
     $input.trigger('blur')
     
   it 'should not invoke noSuggestionMatched callback if valid selection was made', ->
