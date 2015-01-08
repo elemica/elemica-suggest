@@ -128,6 +128,12 @@ The following options are available on the elemicaSuggest function:
   event a selection has been made, we pass in the suggestion object representing that suggestion. In
   the event that a selection has been cleared, we pass in `null`. This callback is invoked on each
   selection the user makes, including identical selections.
+- noSuggestionMatched: (optional) A function to be invoked after user left typeahead input and no
+  suggestion matched entered value. If function returns truthy, input will be cleared. That's the
+  default behaviour. If function returns falsey, input will remain filled. Also, falsey value returned
+  from callback leds to breaking callbacks chain and afterSelect callback is not going to be invoked. 
+  noSuggestionMatched accepts two parameters - the unmatched input field value and reference 
+  to afterSelect in case developer wants to invoke it manually.
 
 ## Developing
 

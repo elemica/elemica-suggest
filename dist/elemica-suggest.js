@@ -11,7 +11,7 @@ elemicaSuggest 0.7.1-SNAPSHOT.
     noop = function() {};
     return $.fn.extend({
       elemicaSuggest: function(options) {
-        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, highlightAnother, highlightNext, highlightPrevious, isSelectingSuggestion, minimumSearchTermLength, noMatchesMessage, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
+        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, highlightAnother, highlightNext, highlightPrevious, isSelectingSuggestion, minimumSearchTermLength, noMatchesMessage, noSuggestionMatched, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
         if (options == null) {
           options = {};
         }
@@ -34,6 +34,9 @@ elemicaSuggest 0.7.1-SNAPSHOT.
         noMatchesMessage = options.noMatchesMessage || $(this.first()).data('no-matches');
         afterSuggest = options.afterSuggest || noop;
         afterSelect = options.afterSelect || noop;
+        noSuggestionMatched = options.noSuggestionMatched || function() {
+          return true;
+        };
         removeSuggestions = function(element) {
           return $(element).siblings(".suggestions").remove();
         };
@@ -104,10 +107,14 @@ elemicaSuggest 0.7.1-SNAPSHOT.
         return this.each(function() {
           $(this).attr('autocomplete', 'off');
           $(this).on('blur', function(event) {
-            removeSuggestions(event.target);
+            var $target;
+            $target = $(event.target);
+            removeSuggestions($target);
             if ($valueInput.val() === "") {
-              $(event.target).val("");
-              return afterSelect(null);
+              if (noSuggestionMatched($target.val(), afterSelect)) {
+                $target.val("");
+                return afterSelect(null);
+              }
             }
           });
           $(this).on('keydown', (function(_this) {

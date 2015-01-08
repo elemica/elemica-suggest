@@ -124,3 +124,75 @@ describe 'Suggest', ->
     $containerDiv = $("<div />").append($input)
     $input.val('bacon').trigger('keyup')
     $containerDiv.find(".suggestions .active").trigger('element-selected')
+
+  it 'should invoke noSuggestionMatched callback if no valid selection was made', (done) ->
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'bacon', value: 'bacon'}])
+          
+    $input = $("<input />")
+    $input.elemicaSuggest
+      suggestFunction: suggestFunction
+      noSuggestionMatched: (value) -> 
+        value.should.equal('lol')
+        done()
+          
+    $input.val('lol').trigger('keyup')
+    $input.trigger('blur')
+    
+  it 'should not invoke noSuggestionMatched callback if valid selection was made', ->
+    invocationCount = 0
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'bacon', value: 'bacon'}])
+
+    $input = $("<input />")
+    $input.elemicaSuggest
+      suggestFunction: suggestFunction
+      noSuggestionMatched: -> invocationCount++
+
+    $containerDiv = $("<div />").append($input)
+    $input.val('bacon').trigger('keyup')
+    $containerDiv.find(".suggestions .active").trigger('element-selected')
+
+    invocationCount.should.equal(0)
+
+  it 'should clear typeahead input by default when no valid selection was made', ->
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+    
+    $input = $("<input />")
+    $input.elemicaSuggest
+      suggestFunction: suggestFunction
+    
+    $input.val('bacon').trigger('keyup')
+    $input.val().should.equal('bacon')
+    
+    $input.trigger('blur')
+    $input.val().should.equal('')
+    
+  it 'should not clear typehead input when no valid selection was made and noSuggestionMatched returned falsey', ->
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])      
+        
+    $input = $("<input />")
+    $input.elemicaSuggest
+      suggestFunction: suggestFunction
+      noSuggestionMatched: -> false
+        
+    $input.val('bacon').trigger('keyup')
+    $input.val().should.equal('bacon')
+    
+    $input.trigger('blur')
+    $input.val().should.equal('bacon')
+    
+  it 'should not invoke afterSelect when no valid selection was made and noSuggestionMatched returned falsey', ->
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+
+    $input = $("<input />")
+    $input.elemicaSuggest
+      suggestFunction: suggestFunction
+      noSuggestionMatched: -> false
+      afterSelect: -> throw new Error('afterSelect should not be run if noSuggestionMatched return falsey')
+
+    $input.val('bacon').trigger('keyup')
+    $input.trigger('blur')
