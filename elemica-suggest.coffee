@@ -35,8 +35,8 @@ elemicaSuggest 0.7.1-SNAPSHOT.
 # - afterSelect: A function to be invoked after a selection has been made. Will pass in the entire
 #   suggestion object that was selected by the user.
 # - noSuggestionMatched: (optional) A function to be invoked after user left typeahead input and no
-#   suggestion matched entered value. If function returns true, input will be cleared. That's the
-#   default behaviour. If function return false, input will remain filled. Callback accepts single
+#   suggestion matched entered value. If function returns truthy, input will be cleared. That's the
+#   default behaviour. If function returns falsey, input will remain filled. Callback accepts single
 #   parameter - it's the unmatched input field value.
 ##
 (($) ->
