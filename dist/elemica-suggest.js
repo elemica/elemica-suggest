@@ -111,10 +111,10 @@ elemicaSuggest 0.7.1-SNAPSHOT.
             $target = $(event.target);
             removeSuggestions($target);
             if ($valueInput.val() === "") {
-              if (noSuggestionMatched($target.val())) {
+              if (noSuggestionMatched($target.val(), afterSelect)) {
                 $target.val("");
+                return afterSelect(null);
               }
-              return afterSelect(null);
             }
           });
           $(this).on('keydown', (function(_this) {

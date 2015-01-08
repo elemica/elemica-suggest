@@ -36,8 +36,10 @@ elemicaSuggest 0.7.1-SNAPSHOT.
 #   suggestion object that was selected by the user.
 # - noSuggestionMatched: (optional) A function to be invoked after user left typeahead input and no
 #   suggestion matched entered value. If function returns truthy, input will be cleared. That's the
-#   default behaviour. If function returns falsey, input will remain filled. Callback accepts single
-#   parameter - it's the unmatched input field value.
+#   default behaviour. If function returns falsey, input will remain filled. Also, falsey value returned
+#   from callback leds to breaking callbacks chain and afterSelect callback is not going to be invoked. 
+#   noSuggestionMatched accepts two parameters - the unmatched input field value and reference 
+#   to afterSelect in case developer wants to invoke it manually.
 ##
 (($) ->
   noop = ->
@@ -164,8 +166,9 @@ elemicaSuggest 0.7.1-SNAPSHOT.
           removeSuggestions $target
 
           if $valueInput.val() == ""
-            $target.val("") if noSuggestionMatched($target.val())
-            afterSelect(null)
+            if noSuggestionMatched($target.val(), afterSelect)
+              $target.val("")
+              afterSelect(null)
 
         $(this).on 'keydown', (event) =>
           if event.keyCode == UP_ARROW || event.keyCode == DOWN_ARROW
