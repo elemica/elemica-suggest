@@ -59,7 +59,10 @@ elemicaSuggest 0.8.1-SNAPSHOT
       suggestFunction = options.suggestFunction || (term, _) ->
         console?.warn "No suggest function defined."
 
-      minimumSearchTermLength = options.minimumSearchTermLength || 2
+      minimumSearchTermLength = if options.minimumSearchTermLength?
+        options.minimumSearchTermLength
+      else
+        2
 
       $valueInput = options.valueInput || $("<input />")
 
