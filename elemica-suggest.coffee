@@ -112,7 +112,7 @@ elemicaSuggest 0.8.2-SNAPSHOT
 
         selectionIndicatorTarget( $(element) ).addClass("has-selection")
 
-      currentHighlightedValue = (element) ->
+      currentHighlightedDisplayText = (element) ->
         $(element).parent().find(".suggestions > .active").text()
 
       populateSuggestions = (element) -> (suggestions) ->
@@ -170,7 +170,7 @@ elemicaSuggest 0.8.2-SNAPSHOT
           $target = $(event.target)
 
           if isSelectingSuggestion()
-            selectHighlighted(this) if $target.val() == currentHighlightedValue(this)
+            selectHighlighted(this) if $target.val() == currentHighlightedDisplayText(this)
             removeSuggestions(this)
 
           if $valueInput.val() == ""
