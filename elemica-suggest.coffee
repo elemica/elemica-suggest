@@ -109,6 +109,7 @@ elemicaSuggest 0.8.2-SNAPSHOT
             .end()
           .end()
           .trigger("focus")
+        removeSuggestions(element)
 
         selectionIndicatorTarget( $(element) ).addClass("has-selection")
 
@@ -169,9 +170,8 @@ elemicaSuggest 0.8.2-SNAPSHOT
         $(this).on 'blur', (event) ->
           $target = $(event.target)
 
-          if isSelectingSuggestion()
-            selectHighlighted(this) if $target.val() == currentHighlightedDisplayText(this)
-            removeSuggestions(this)
+          if isSelectingSuggestion() && $target.val() == currentHighlightedDisplayText(this)
+            selectHighlighted(this)
 
           if $valueInput.val() == ""
             if noSuggestionMatched($target.val(), afterSelect)
@@ -185,7 +185,6 @@ elemicaSuggest 0.8.2-SNAPSHOT
             event.preventDefault()
           else if event.keyCode == TAB && isSelectingSuggestion()
             selectHighlighted(this)
-            removeSuggestions(this)
           else if event.keyCode == BACKSPACE && $valueInput.val() != ""
             $valueInput.val("")
             $(event.target).val("")
@@ -199,7 +198,6 @@ elemicaSuggest 0.8.2-SNAPSHOT
               highlightNext(this)
             when ENTER
               selectHighlighted(this)
-              removeSuggestions(this)
             else
               $valueInput.val("")
               $target = $(event.target)
