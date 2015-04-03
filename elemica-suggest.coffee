@@ -170,7 +170,7 @@ elemicaSuggest 0.8.2-SNAPSHOT
         $(this).on 'blur', (event) ->
           $target = $(event.target)
 
-          if isSelectingSuggestion() && $target.val() == currentHighlightedDisplayText(this)
+          if isSelectingSuggestion() && $target.val().toLowerCase() == currentHighlightedDisplayText(this).toLowerCase()
             selectHighlighted(this)
           else
             removeSuggestions(this)
