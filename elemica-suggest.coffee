@@ -172,6 +172,8 @@ elemicaSuggest 0.8.2-SNAPSHOT
 
           if isSelectingSuggestion() && $target.val() == currentHighlightedDisplayText(this)
             selectHighlighted(this)
+          else
+            removeSuggestions(this)
 
           if $valueInput.val() == ""
             if noSuggestionMatched($target.val(), afterSelect)
