@@ -102,6 +102,20 @@ describe 'Suggest', ->
 
     makeASelection()
 
+  it 'should invoke afterSelect with the selected suggestion if the suggestion was manually entered', (done) ->
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+
+    $input = $("<input />").elemicaSuggest
+      suggestFunction: suggestFunction
+      afterSelect: (suggestion) ->
+        suggestion.display.should.equal("suggestion 1")
+        suggestion.value.should.equal("suggestion 1")
+        done()
+
+    $containerDiv = $("<div />").append($input)
+    $input.val('suggestion 1').trigger('keyup').trigger('blur')
+
   it 'should invoke afterSelect with null after a selection is cleared', (done) ->
     invocationCount = 0
     suggestFunction = (searchTerm, populateFn) ->
