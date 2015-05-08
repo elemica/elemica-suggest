@@ -37,8 +37,8 @@ elemicaSuggest 0.8.2-SNAPSHOT
 # - noSuggestionMatched: (optional) A function to be invoked after user left typeahead input and no
 #   suggestion matched entered value. If function returns truthy, input will be cleared. That's the
 #   default behaviour. If function returns falsey, input will remain filled. Also, falsey value returned
-#   from callback leds to breaking callbacks chain and afterSelect callback is not going to be invoked. 
-#   noSuggestionMatched accepts two parameters - the unmatched input field value and reference 
+#   from callback leds to breaking callbacks chain and afterSelect callback is not going to be invoked.
+#   noSuggestionMatched accepts two parameters - the unmatched input field value and reference
 #   to afterSelect in case developer wants to invoke it manually.
 ##
 (($) ->
@@ -73,7 +73,7 @@ elemicaSuggest 0.8.2-SNAPSHOT
       afterSuggest = options.afterSuggest || noop
 
       afterSelect = options.afterSelect || noop
-      
+
       noSuggestionMatched = options.noSuggestionMatched || -> true
 
       removeSuggestions = (element) ->
@@ -108,10 +108,13 @@ elemicaSuggest 0.8.2-SNAPSHOT
               .trigger("element-selected")
             .end()
           .end()
-          .trigger("blur")
           .trigger("focus")
+        removeSuggestions(element)
 
         selectionIndicatorTarget( $(element) ).addClass("has-selection")
+
+      currentHighlightedDisplayText = (element) ->
+        $(element).parent().find(".suggestions > .active").text()
 
       populateSuggestions = (element) -> (suggestions) ->
         $suggestionsList = $(element).siblings(".suggestions")
@@ -166,7 +169,11 @@ elemicaSuggest 0.8.2-SNAPSHOT
 
         $(this).on 'blur', (event) ->
           $target = $(event.target)
-          removeSuggestions $target
+
+          if isSelectingSuggestion() && $target.val().toLowerCase() == currentHighlightedDisplayText(this).toLowerCase()
+            selectHighlighted(this)
+          else
+            removeSuggestions(this)
 
           if $valueInput.val() == ""
             if noSuggestionMatched($target.val(), afterSelect)

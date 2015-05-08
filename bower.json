@@ -3,7 +3,8 @@
   "version": "0.8.2-SNAPSHOT",
   "authors": [
     "Matt Farmer <matt@frmr.me>",
-    "Łukasz Lenart <lukasz@softwaremill.pl>"
+    "Łukasz Lenart <lukasz@softwaremill.pl>",
+    "Piotr Dyraga <piotr.dyraga@softwaremill.pl>"
   ],
   "description": "A lightweight suggestion typeahead library that makes your life better by doing less.",
   "main": "elemica-suggest.coffee",

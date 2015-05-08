@@ -102,6 +102,12 @@ describe 'Suggest', ->
 
     makeASelection()
 
+  # This spec is marked as pending because jsdom doesn't properly support the layout calculations
+  # that are required to do some of the checks to make this test work. To resolve that we're going
+  # to rewrite these tests at some point to use Phantom.js. For now, we'll leave this as pending so
+  # we come back to it.
+  it 'should invoke afterSelect with the selected suggestion if the suggestion was manually entered'
+
   it 'should invoke afterSelect with null after a selection is cleared', (done) ->
     invocationCount = 0
     suggestFunction = (searchTerm, populateFn) ->
