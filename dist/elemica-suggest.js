@@ -11,7 +11,7 @@ elemicaSuggest 0.8.2-SNAPSHOT
     noop = function() {};
     return $.fn.extend({
       elemicaSuggest: function(options) {
-        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, highlightAnother, highlightNext, highlightPrevious, isSelectingSuggestion, minimumSearchTermLength, noMatchesMessage, noSuggestionMatched, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
+        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, currentHighlightedDisplayText, highlightAnother, highlightNext, highlightPrevious, isSelectingSuggestion, minimumSearchTermLength, noMatchesMessage, noSuggestionMatched, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
         if (options == null) {
           options = {};
         }
@@ -62,8 +62,12 @@ elemicaSuggest 0.8.2-SNAPSHOT
           });
         };
         selectHighlighted = function(element) {
-          $(element).parent().find(".suggestions .active").trigger("element-selected").end().end().trigger("blur").trigger("focus");
+          $(element).parent().find(".suggestions .active").trigger("element-selected").end().end().trigger("focus");
+          removeSuggestions(element);
           return selectionIndicatorTarget($(element)).addClass("has-selection");
+        };
+        currentHighlightedDisplayText = function(element) {
+          return $(element).parent().find(".suggestions > .active").text();
         };
         populateSuggestions = function(element) {
           return function(suggestions) {
@@ -109,7 +113,11 @@ elemicaSuggest 0.8.2-SNAPSHOT
           $(this).on('blur', function(event) {
             var $target;
             $target = $(event.target);
-            removeSuggestions($target);
+            if (isSelectingSuggestion() && $target.val().toLowerCase() === currentHighlightedDisplayText(this).toLowerCase()) {
+              selectHighlighted(this);
+            } else {
+              removeSuggestions(this);
+            }
             if ($valueInput.val() === "") {
               if (noSuggestionMatched($target.val(), afterSelect)) {
                 $target.val("");
