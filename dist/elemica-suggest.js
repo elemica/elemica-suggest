@@ -111,7 +111,7 @@ elemicaSuggest 0.9.1-SNAPSHOT
         return this.each(function() {
           $(this).attr('autocomplete', 'off');
           $(this).on('blur', function(event) {
-            var $target, val;
+            var $target, originalValue;
             $target = $(event.target);
             if (isSelectingSuggestion() && $target.val().toLowerCase() === currentHighlightedDisplayText(this).toLowerCase()) {
               selectHighlighted(this);
@@ -120,9 +120,9 @@ elemicaSuggest 0.9.1-SNAPSHOT
             }
             if ($valueInput.val() === "") {
               if (noSuggestionMatched($target.val(), afterSelect)) {
-                val = $target.val();
+                originalValue = $target.val();
                 $target.val("");
-                if (val !== "") {
+                if (originalValue !== "") {
                   return afterSelect(null);
                 }
               }
