@@ -177,9 +177,9 @@ elemicaSuggest 0.9.1-SNAPSHOT
 
           if $valueInput.val() == ""
             if noSuggestionMatched($target.val(), afterSelect)
-              val = $target.val()
+              originalValue = $target.val()
               $target.val("")
-              afterSelect(null) if val != ""
+              afterSelect(null) if originalValue != ""
 
         $(this).on 'keydown', (event) =>
           if event.keyCode == UP_ARROW || event.keyCode == DOWN_ARROW
