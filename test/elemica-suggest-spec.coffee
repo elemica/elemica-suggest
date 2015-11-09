@@ -203,3 +203,14 @@ describe 'Suggest', ->
 
     $input.val('bacon').trigger('keyup')
     $input.trigger('blur')
+
+  it 'should not invoke afterSelect if user entered nothing', ->
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+      
+    $input = $("<input />")
+    $input.elemicaSuggest
+      suggestFunction: suggestFunction
+      afterSelect: -> throw new Error('afterSelect should not be run if user entered nothing')
+      
+    $input.trigger('blur')
