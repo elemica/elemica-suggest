@@ -1,5 +1,5 @@
 ###
-elemicaSuggest 0.9.1-SNAPSHOT
+elemicaSuggest 0.9.1
 (c)2014 Elemica - Licensed under the terms of the Apache 2.0 License.
 ###
 ##
