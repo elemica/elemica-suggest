@@ -7,7 +7,7 @@ elemicaSuggest 0.9.2-SNAPSHOT
 #
 # The elemicaSuggest function provides a simple, simple typeahead suggest
 # that simply monitors an input, calls a function to get some suggestions,
-# and add a ul next to the input with the suggestions.
+# and adds a ul next to the input with the suggestions.
 #
 # For configuration the elemicaSuggest call takes in an object literal that
 # defines the following options:
@@ -24,6 +24,12 @@ elemicaSuggest 0.9.2-SNAPSHOT
 #   to initate a typeahead search. Defaults to 2.
 # - valueInput: A jQuery object representing the DOM node which will receive
 #   the value selected by the user.
+# - buildMarkerRegExp: A function that is given the current search term, and is
+#   expected to return a regular expression whose capturing groups will be used
+#   to mark the suggestions with the class `match`. For example, if the search
+#   term was "hello", you could return /(hello)/ to mark all instances of that
+#   word in all suggestions with the `match` class. The matches are wrapped in
+#   a span.
 # - selectionIndicatorTarget: A function that takes in a jQuery object that represents
 #   the input and operates on that object to return a jQuery object of the element(s)
 #   that will receive the has-selection CSS class when a selection is made. By default
@@ -78,6 +84,8 @@ elemicaSuggest 0.9.2-SNAPSHOT
 
       noSuggestionMatched = options.noSuggestionMatched || -> true
 
+      buildMarkerRegExp = options.buildMarkerRegExp || noop
+
       removeSuggestions = (element) ->
         $(element).siblings(".suggestions").remove()
 
@@ -118,7 +126,33 @@ elemicaSuggest 0.9.2-SNAPSHOT
       currentHighlightedDisplayText = (element) ->
         $(element).parent().find(".suggestions > .active").text()
 
-      populateSuggestions = (element) -> (suggestions) ->
+      markMatches = (markerRegExp) -> (textToMark) ->
+        markedContent = []
+        currentIndex = 0
+
+        while latestMatch = markerRegExp.exec(textToMark)
+          prefix = textToMark.substring(currentIndex, latestMatch.index)
+
+          matches =
+            for i in [1...latestMatch.length]
+              $('<span />')
+                .addClass('match')
+                .text(latestMatch[i])
+
+          currentIndex = latestMatch.index + latestMatch[0].length
+
+          markedContent.push document.createTextNode(prefix)
+          markedContent.push.apply markedContent, matches
+
+          # Non-global RegExps will repeatedly match from the beginning; we
+          # break out in that case to avoid an infinite loop.
+          break unless markerRegExp.global
+
+        markedContent.push document.createTextNode(textToMark.substring(currentIndex))
+
+        markedContent
+
+      populateSuggestions = (element, markMatchRegExp) -> (suggestions) ->
         $suggestionsList = $(element).siblings(".suggestions")
 
         if $suggestionsList.length == 0
@@ -127,10 +161,19 @@ elemicaSuggest 0.9.2-SNAPSHOT
 
           $(element).parent().append($suggestionsList)
 
+        matchMarker = if markMatchRegExp? then markMatches(markMatchRegExp)
+
         $suggestionsList.empty().append(
           for suggestion in suggestions
             do (suggestion) ->
-              $suggestionLi = $("<li />").text(suggestion.display)
+              $suggestionLi = $("<li />")
+
+              if matchMarker?
+                $suggestionLi.append matchMarker(suggestion.display)
+              else
+                $suggestionLi.text suggestion.display
+
+              $suggestionLi
                 .on('mousedown element-selected', ->
                   $(element).val( suggestion.display )
                   $valueInput.val( suggestion.value )
@@ -213,7 +256,9 @@ elemicaSuggest 0.9.2-SNAPSHOT
               searchTerm = $.trim($target.val())
 
               if searchTerm.length >= minimumSearchTermLength
-                suggestFunction searchTerm, populateSuggestions(this)
+                markMatchRegExp = buildMarkerRegExp(searchTerm)
+
+                suggestFunction searchTerm, populateSuggestions(this, markMatchRegExp)
               else
                 removeSuggestions(this)
 )(jQuery)

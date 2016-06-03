@@ -4,6 +4,7 @@ jsdom = require 'jsdom'
 jsdomWindow = jsdom.jsdom().defaultView
 jQuery = require('jquery')(jsdomWindow)
 $ = jQuery
+document = jsdomWindow.document
 fs = require 'fs'
 
 eval(fs.readFileSync('dist/elemica-suggest.js').toString())
@@ -50,6 +51,42 @@ describe 'Suggest', ->
       populateFn([{display: 'suggestion 1', value: 'suggestion 1', metadata: 'a good suggestion'}, {display: 'suggestion 2', value: 'suggestion 2', metadata: 'a great suggestion'}])
 
     elemicaSuggestionRenderingSpec(suggestFunction: suggestFunction, expectedMarkup, done)
+
+  it 'should mark matches when a marker RegExp builder is provided', (done) ->
+    expectedMarkup = '<input autocomplete=\"off\"><ul class=\"suggestions\"><li class=\"active\"><img src=\"zztop.gif\">su<span class="match">gges</span>ti<span class="match">on </span>1<span class=\"metadata\">a good suggestion</span></li><li><img src=\"walnut.jpg\">su<span class="match">gges</span>ti<span class="match">on </span>2<span class=\"metadata\">a great suggestion</span></li></ul>'
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([
+        {display: 'suggestion 1', value: 'suggestion 1', image: 'zztop.gif', metadata: 'a good suggestion'},
+        {display: 'suggestion 2', value: 'suggestion 2', image: 'walnut.jpg', metadata: 'a great suggestion'}
+      ])
+    markerRegExpFunction = (searchTerm) ->
+      searchTerm.should.equal('bacon')
+      /(gges|on )/g
+
+    elemicaSuggestionRenderingSpec(
+      suggestFunction: suggestFunction,
+      buildMarkerRegExp: markerRegExpFunction,
+      expectedMarkup,
+      done
+    )
+
+  it 'should mark matches correctly when a non-global marker RegExp is provided', (done) ->
+    expectedMarkup = '<input autocomplete=\"off\"><ul class=\"suggestions\"><li class=\"active\"><img src=\"zztop.gif\">su<span class="match">gges</span>tion 1<span class=\"metadata\">a good suggestion</span></li><li><img src=\"walnut.jpg\">su<span class="match">gges</span>tion 2<span class=\"metadata\">a great suggestion</span></li></ul>'
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([
+        {display: 'suggestion 1', value: 'suggestion 1', image: 'zztop.gif', metadata: 'a good suggestion'},
+        {display: 'suggestion 2', value: 'suggestion 2', image: 'walnut.jpg', metadata: 'a great suggestion'}
+      ])
+    markerRegExpFunction = (searchTerm) ->
+      searchTerm.should.equal('bacon')
+      /(gges|on )/
+
+    elemicaSuggestionRenderingSpec(
+      suggestFunction: suggestFunction,
+      buildMarkerRegExp: markerRegExpFunction,
+      expectedMarkup,
+      done
+    )
 
   it 'should correctly provide markup for suggestions with all options', (done) ->
     expectedMarkup = '<input autocomplete=\"off\"><ul class=\"suggestions\"><li class=\"active\"><img src=\"zztop.gif\">suggestion 1<span class=\"metadata\">a good suggestion</span></li><li><img src=\"walnut.jpg\">suggestion 2<span class=\"metadata\">a great suggestion</span></li></ul>'
