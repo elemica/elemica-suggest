@@ -214,3 +214,61 @@ describe 'Suggest', ->
       afterSelect: -> throw new Error('afterSelect should not be run if user entered nothing')
       
     $input.trigger('blur')
+
+describe 'Suggest when handling keyboard shortcuts', ->
+  onSelect = () ->
+
+  suggestFunction = (searchTerm, populateFn) ->
+    populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+
+  $input = $("<input />")
+  $input.elemicaSuggest
+    suggestFunction: suggestFunction
+    afterSelect: (selection) -> onSelect?(selection)
+
+  $containerDiv = $("<div />").append($input)
+
+  $input.val('bacon').trigger('keyup') # show the completion dropdown
+
+  # The following tests assume they run in order as they move through the
+  # suggestion list.
+  it 'should move the selection down if the down arrow is pressed', ->
+    keyupEvent = $.Event 'keyup'
+    keyupEvent.which = 40
+    $input.trigger keyupEvent
+
+    $containerDiv.find(".suggestions .active").text().should.equal('suggestion 2')
+
+  it 'should move the selection up if the up arrow is pressed', ->
+    keyupEvent = $.Event 'keyup'
+    keyupEvent.which = 38
+    $input.trigger keyupEvent
+
+    $containerDiv.find(".suggestions .active").text().should.equal('suggestion 1')
+
+  it 'should move the selection down if C-N is pressed', ->
+    keyupEvent = $.Event 'keyup'
+    keyupEvent.which = 78
+    keyupEvent.ctrlKey = true
+    $input.trigger keyupEvent
+
+    $containerDiv.find(".suggestions .active").text().should.equal('suggestion 2')
+
+  it 'should move the selection up if C-P is pressed', ->
+    keyupEvent = $.Event 'keyup'
+    keyupEvent.which = 80
+    keyupEvent.ctrlKey = true
+    $input.trigger keyupEvent
+
+    $containerDiv.find(".suggestions .active").text().should.equal('suggestion 1')
+
+  it 'should select the highlighted item if enter is pressed', ->
+    onSelect = (selected) ->
+      selected.display.should.equal('suggestion 1')
+      selected.value.should.equal('suggestion 1')
+
+    keyupEvent = $.Event 'keyup'
+    keyupEvent.which = 13
+    $input.trigger keyupEvent
+
+    $containerDiv.find(".suggestions").length.should.equal(0)

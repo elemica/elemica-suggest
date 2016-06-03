@@ -46,6 +46,8 @@ elemicaSuggest 0.9.2-SNAPSHOT
 
   $.fn.extend
     elemicaSuggest: (options = {}) ->
+      KEY_N = 78
+      KEY_P = 80
       UP_ARROW = 38
       DOWN_ARROW = 40
       ENTER = 13
@@ -194,12 +196,15 @@ elemicaSuggest 0.9.2-SNAPSHOT
             afterSelect(null)
 
         $(this).on 'keyup', (event) =>
-          switch event.keyCode
-            when UP_ARROW
+          key = event.which
+          ctrlPressed = event.ctrlKey
+
+          switch
+            when key is UP_ARROW || (ctrlPressed && key is KEY_P)
               highlightPrevious(this)
-            when DOWN_ARROW
+            when key is DOWN_ARROW || (ctrlPressed && key is KEY_N)
               highlightNext(this)
-            when ENTER
+            when key is ENTER
               selectHighlighted(this)
             else
               $valueInput.val("")
