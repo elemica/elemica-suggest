@@ -182,13 +182,13 @@ elemicaSuggest 0.9.2-SNAPSHOT
               afterSelect(null) if originalValue != ""
 
         $(this).on 'keydown', (event) =>
-          if event.keyCode == UP_ARROW || event.keyCode == DOWN_ARROW
+          if event.which == UP_ARROW || event.which == DOWN_ARROW
             event.preventDefault()
-          else if event.keyCode == ENTER && isSelectingSuggestion()
+          else if event.which == ENTER && isSelectingSuggestion()
             event.preventDefault()
-          else if event.keyCode == TAB && isSelectingSuggestion()
+          else if event.which == TAB && isSelectingSuggestion()
             selectHighlighted(this)
-          else if event.keyCode == BACKSPACE && $valueInput.val() != ""
+          else if event.which == BACKSPACE && $valueInput.val() != ""
             $valueInput.val("")
             $(event.target).val("")
             afterSelect(null)
