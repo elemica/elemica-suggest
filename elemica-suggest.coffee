@@ -28,8 +28,8 @@ elemicaSuggest 0.9.2-SNAPSHOT
 #   expected to return a regular expression whose capturing groups will be used
 #   to mark the suggestions with the class `match`. For example, if the search
 #   term was "hello", you could return /(hello)/ to mark all instances of that
-#   word in all suggestions with the `match` class. The matches are wrapped in
-#   a span.
+#   word in all suggestions with the `match` class. Each match is wrapped in a
+#   `span`.
 # - selectionIndicatorTarget: A function that takes in a jQuery object that represents
 #   the input and operates on that object to return a jQuery object of the element(s)
 #   that will receive the has-selection CSS class when a selection is made. By default
