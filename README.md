@@ -52,20 +52,25 @@ to style that `ul` however you like.
 
 ### CSS Classes
 
-The elemica-suggest library is pretty intentionally unstyled when you first drop it in. This
-is an intentional decision. You are the one building your app, and you should be the one to
-dictate what it looks like - typeahead suggestions and all. To facilitate this we use a few
-different CSS classes to help you with your styling.
+The elemica-suggest library is pretty unstyled when you first drop it in. This
+is an intentional decision. You are the one building your app, and you should
+be the one to dictate what it looks like - typeahead suggestions and all. To
+facilitate this we use a few different CSS classes to help you with your
+styling.
 
 * **suggestions** is applied to the `ul` that contains the suggestions that are being made.
 * **active** is applied to the `li` inside `ul.suggestions` that is currently selected by the
-  user. A suggestion can become active by the user using the up or down arrow keys or by hovering
-  over the `li` with their mouse.
+  user. A suggestion can become active by the user using the up or down arrow
+  keys, or by using Ctrl-N or Ctrl-P, or by hovering over the `li` with their
+  mouse.
 * **has-selection** is applied to an element to indicate that a selection has been made. By default
   this element is the text field itself, but if you have need you can provide a value for the
   `selectionIndicatorTarget` parameter (see below) and change where this class is applied.
 * **invalid-text** is applied to a suggestion `li` when that suggestion `li` is a message informing
   the user that there are no matches for their query.
+* **match** is applied to spans inside suggestions when part of the suggestion
+  is matched by a capturing group in the regular expression returned by the
+  `buildMarkerRegExp` function, if provided.
 
 ### Using Dev Tools
 
@@ -116,6 +121,12 @@ The following options are available on the elemicaSuggest function:
   the value selected by the user.
 - minimumSearchTermLength: (optional) The minimum number of characters the end-user needs
   to type in the text box before elemica-suggest starts making suggestions.
+- buildMarkerRegExp: (optional) A function that is given the current search
+  term, and is expected to return a regular expression whose capturing groups
+  will be used to mark the suggestions with the class `match`. For example, if
+  the search term was "hello", you could return /(hello)/ to mark all instances
+  of that word in all suggestions with the `match` class. Each match is wrapped
+  in a `span`.
 - selectionIndicatorTarget: (optional) A function that takes in a jQuery object that represents
   the input and operates on that object to return a jQuery object of the element(s)
   that will receive the has-selection CSS class when a selection is made. By default

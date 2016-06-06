@@ -4,7 +4,8 @@
   "authors": [
     "Matt Farmer <matt@frmr.me>",
     "Łukasz Lenart <lukasz@softwaremill.pl>",
-    "Piotr Dyraga <piotr.dyraga@softwaremill.pl>"
+    "Piotr Dyraga <piotr.dyraga@softwaremill.pl>",
+    "Antonio Salazar Cardozo <savedfastcool@gmail.com>"
   ],
   "description": "A lightweight suggestion typeahead library that makes your life better by doing less.",
   "main": "elemica-suggest.coffee",
