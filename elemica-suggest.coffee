@@ -260,7 +260,9 @@ elemicaSuggest 0.9.2-SNAPSHOT
             when key is ENTER
               selectHighlighted(this)
             # Ignore other non-printable keys.
-            when key isnt CTRL && key isnt ALT && key isnt SHIFT && key isnt OS_LEFT && key isnt OS_RIGHT
+            when key isnt CTRL && key isnt ALT && key isnt SHIFT &&
+                 key isnt OS_LEFT && key isnt OS_RIGHT &&
+                 key isnt TAB
               $valueInput.val("")
               $target = $(event.target)
               selectionIndicatorTarget($target).removeClass("has-selection")

@@ -314,6 +314,7 @@ describe 'Suggest when handling keyboard shortcuts', ->
     searchCalls = 0
     onSuggest = -> searchCalls += 1
 
+    triggerKeyUp $input, 9
     triggerKeyUp $input, 13
     triggerKeyUp $input, 16
     triggerKeyUp $input, 17
