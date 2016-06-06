@@ -60,6 +60,12 @@ elemicaSuggest 0.9.2-SNAPSHOT
       TAB = 9
       BACKSPACE = 8
 
+      SHIFT = 16
+      CTRL = 17
+      ALT = 18
+      OS_LEFT = 91
+      OS_RIGHT = 92
+
       # This function returns true if selection box is active
       # and user is selecting one of the options
       isSelectingSuggestion = -> $(".suggestions").is(":visible")
@@ -227,7 +233,11 @@ elemicaSuggest 0.9.2-SNAPSHOT
               afterSelect(null) if originalValue != ""
 
         $(this).on 'keydown', (event) =>
-          if event.which == UP_ARROW || event.which == DOWN_ARROW
+          key = event.which
+          ctrlPressed = event.ctrlKey
+
+          if key is UP_ARROW || key is DOWN_ARROW ||
+             (ctrlPressed && (key is KEY_P || key is KEY_N))
             event.preventDefault()
           else if event.which == ENTER && isSelectingSuggestion()
             event.preventDefault()
@@ -249,7 +259,8 @@ elemicaSuggest 0.9.2-SNAPSHOT
               highlightNext(this)
             when key is ENTER
               selectHighlighted(this)
-            else
+            # Ignore other non-printable keys.
+            when key isnt CTRL && key isnt ALT && key isnt SHIFT && key isnt OS_LEFT && key isnt OS_RIGHT
               $valueInput.val("")
               $target = $(event.target)
               selectionIndicatorTarget($target).removeClass("has-selection")
