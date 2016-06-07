@@ -66,6 +66,8 @@ elemicaSuggest 0.9.2-SNAPSHOT
       OS_LEFT = 91
       OS_RIGHT = 92
 
+      NON_PRINTALBE_KEYS = [SHIFT, CTRL, ALT, OS_LEFT, OS_RIGHT, TAB]
+
       # This function returns true if selection box is active
       # and user is selecting one of the options
       isSelectingSuggestion = -> $(".suggestions").is(":visible")
@@ -263,9 +265,7 @@ elemicaSuggest 0.9.2-SNAPSHOT
             when key is ENTER
               selectHighlighted(this)
             # Ignore other non-printable keys.
-            when key isnt CTRL && key isnt ALT && key isnt SHIFT &&
-                 key isnt OS_LEFT && key isnt OS_RIGHT &&
-                 key isnt TAB
+            when key not in NON_PRINTALBE_KEYS
               $valueInput.val("")
               $target = $(event.target)
               selectionIndicatorTarget($target).removeClass("has-selection")
