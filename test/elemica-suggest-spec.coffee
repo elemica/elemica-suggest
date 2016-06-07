@@ -88,6 +88,25 @@ describe 'Suggest', ->
       done
     )
 
+  it 'should abort match marking when an empty match occurs', (done) ->
+    expectedMarkup = '<input autocomplete=\"off\"><ul class=\"suggestions\"><li class=\"active\"><img src=\"zztop.gif\">suggestion 1<span class=\"metadata\">a good suggestion</span></li><li><img src=\"walnut.jpg\">suggestion 2<span class=\"metadata\">a great suggestion</span></li></ul>'
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([
+        {display: 'suggestion 1', value: 'suggestion 1', image: 'zztop.gif', metadata: 'a good suggestion'},
+        {display: 'suggestion 2', value: 'suggestion 2', image: 'walnut.jpg', metadata: 'a great suggestion'}
+      ])
+    markerRegExpFunction = (searchTerm) ->
+      searchTerm.should.equal('bacon')
+      /(gges|)/
+
+    elemicaSuggestionRenderingSpec(
+      suggestFunction: suggestFunction,
+      buildMarkerRegExp: markerRegExpFunction,
+      expectedMarkup,
+      done
+    )
+
+
   it 'should correctly provide markup for suggestions with all options', (done) ->
     expectedMarkup = '<input autocomplete=\"off\"><ul class=\"suggestions\"><li class=\"active\"><img src=\"zztop.gif\">suggestion 1<span class=\"metadata\">a good suggestion</span></li><li><img src=\"walnut.jpg\">suggestion 2<span class=\"metadata\">a great suggestion</span></li></ul>'
     suggestFunction = (searchTerm, populateFn) ->

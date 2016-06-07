@@ -137,6 +137,9 @@ elemicaSuggest 0.9.2-SNAPSHOT
         currentIndex = 0
 
         while latestMatch = markerRegExp.exec(textToMark)
+          # If we have a zero-width match, bail before we infini-loop.
+          break if latestMatch[0].length == 0
+
           prefix = textToMark.substring(currentIndex, latestMatch.index)
 
           matches =
@@ -145,7 +148,7 @@ elemicaSuggest 0.9.2-SNAPSHOT
                 .addClass('match')
                 .text(latestMatch[i])
 
-          currentIndex = latestMatch.index + latestMatch[0].length
+          currentIndex = latestMatch.index + Math.max(latestMatch[0].length, 1)
 
           markedContent.push document.createTextNode(prefix)
           markedContent.push.apply markedContent, matches
