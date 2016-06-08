@@ -11,15 +11,22 @@ elemicaSuggest 0.9.2-SNAPSHOT
     noop = function() {};
     return $.fn.extend({
       elemicaSuggest: function(options) {
-        var $valueInput, BACKSPACE, DOWN_ARROW, ENTER, TAB, UP_ARROW, afterSelect, afterSuggest, currentHighlightedDisplayText, highlightAnother, highlightNext, highlightPrevious, isSelectingSuggestion, minimumSearchTermLength, noMatchesMessage, noSuggestionMatched, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
+        var $valueInput, ALT, BACKSPACE, CTRL, DOWN_ARROW, ENTER, KEY_N, KEY_P, OS_LEFT, OS_RIGHT, SHIFT, TAB, UP_ARROW, afterSelect, afterSuggest, buildMarkerRegExp, currentHighlightedDisplayText, highlightAnother, highlightNext, highlightPrevious, isSelectingSuggestion, markMatches, minimumSearchTermLength, noMatchesMessage, noSuggestionMatched, populateSuggestions, removeSuggestions, selectHighlighted, selectionIndicatorTarget, suggestFunction;
         if (options == null) {
           options = {};
         }
+        KEY_N = 78;
+        KEY_P = 80;
         UP_ARROW = 38;
         DOWN_ARROW = 40;
         ENTER = 13;
         TAB = 9;
         BACKSPACE = 8;
+        SHIFT = 16;
+        CTRL = 17;
+        ALT = 18;
+        OS_LEFT = 91;
+        OS_RIGHT = 92;
         isSelectingSuggestion = function() {
           return $(".suggestions").is(":visible");
         };
@@ -37,6 +44,7 @@ elemicaSuggest 0.9.2-SNAPSHOT
         noSuggestionMatched = options.noSuggestionMatched || function() {
           return true;
         };
+        buildMarkerRegExp = options.buildMarkerRegExp || noop;
         removeSuggestions = function(element) {
           return $(element).siblings(".suggestions").remove();
         };
@@ -69,22 +77,55 @@ elemicaSuggest 0.9.2-SNAPSHOT
         currentHighlightedDisplayText = function(element) {
           return $(element).parent().find(".suggestions > .active").text();
         };
-        populateSuggestions = function(element) {
+        markMatches = function(markerRegExp) {
+          return function(textToMark) {
+            var currentIndex, i, latestMatch, markedContent, matches, prefix;
+            markedContent = [];
+            currentIndex = 0;
+            while (latestMatch = markerRegExp.exec(textToMark)) {
+              prefix = textToMark.substring(currentIndex, latestMatch.index);
+              matches = (function() {
+                var j, ref, results;
+                results = [];
+                for (i = j = 1, ref = latestMatch.length; 1 <= ref ? j < ref : j > ref; i = 1 <= ref ? ++j : --j) {
+                  results.push($('<span />').addClass('match').text(latestMatch[i]));
+                }
+                return results;
+              })();
+              currentIndex = latestMatch.index + latestMatch[0].length;
+              markedContent.push(document.createTextNode(prefix));
+              markedContent.push.apply(markedContent, matches);
+              if (!markerRegExp.global) {
+                break;
+              }
+            }
+            markedContent.push(document.createTextNode(textToMark.substring(currentIndex)));
+            return markedContent;
+          };
+        };
+        populateSuggestions = function(element, markMatchRegExp) {
           return function(suggestions) {
-            var $suggestionsList, suggestion;
+            var $suggestionsList, matchMarker, suggestion;
             $suggestionsList = $(element).siblings(".suggestions");
             if ($suggestionsList.length === 0) {
               $suggestionsList = $("<ul />").addClass("suggestions");
               $(element).parent().append($suggestionsList);
             }
+            matchMarker = markMatchRegExp != null ? markMatches(markMatchRegExp) : void 0;
             $suggestionsList.empty().append((function() {
-              var i, len, results;
+              var j, len, results;
               results = [];
-              for (i = 0, len = suggestions.length; i < len; i++) {
-                suggestion = suggestions[i];
+              for (j = 0, len = suggestions.length; j < len; j++) {
+                suggestion = suggestions[j];
                 results.push((function(suggestion) {
                   var $suggestionLi;
-                  $suggestionLi = $("<li />").text(suggestion.display).on('mousedown element-selected', function() {
+                  $suggestionLi = $("<li />");
+                  if (matchMarker != null) {
+                    $suggestionLi.append(matchMarker(suggestion.display));
+                  } else {
+                    $suggestionLi.text(suggestion.display);
+                  }
+                  $suggestionLi.on('mousedown element-selected', function() {
                     $(element).val(suggestion.display);
                     $valueInput.val(suggestion.value);
                     return afterSelect(suggestion);
@@ -130,13 +171,16 @@ elemicaSuggest 0.9.2-SNAPSHOT
           });
           $(this).on('keydown', (function(_this) {
             return function(event) {
-              if (event.keyCode === UP_ARROW || event.keyCode === DOWN_ARROW) {
+              var ctrlPressed, key;
+              key = event.which;
+              ctrlPressed = event.ctrlKey;
+              if (key === UP_ARROW || key === DOWN_ARROW || (ctrlPressed && (key === KEY_P || key === KEY_N))) {
                 return event.preventDefault();
-              } else if (event.keyCode === ENTER && isSelectingSuggestion()) {
+              } else if (event.which === ENTER && isSelectingSuggestion()) {
                 return event.preventDefault();
-              } else if (event.keyCode === TAB && isSelectingSuggestion()) {
+              } else if (event.which === TAB && isSelectingSuggestion()) {
                 return selectHighlighted(_this);
-              } else if (event.keyCode === BACKSPACE && $valueInput.val() !== "") {
+              } else if (event.which === BACKSPACE && $valueInput.val() !== "") {
                 $valueInput.val("");
                 $(event.target).val("");
                 return afterSelect(null);
@@ -145,21 +189,24 @@ elemicaSuggest 0.9.2-SNAPSHOT
           })(this));
           return $(this).on('keyup', (function(_this) {
             return function(event) {
-              var $target, searchTerm;
-              switch (event.keyCode) {
-                case UP_ARROW:
+              var $target, ctrlPressed, key, markMatchRegExp, searchTerm;
+              key = event.which;
+              ctrlPressed = event.ctrlKey;
+              switch (false) {
+                case !(key === UP_ARROW || (ctrlPressed && key === KEY_P)):
                   return highlightPrevious(_this);
-                case DOWN_ARROW:
+                case !(key === DOWN_ARROW || (ctrlPressed && key === KEY_N)):
                   return highlightNext(_this);
-                case ENTER:
+                case key !== ENTER:
                   return selectHighlighted(_this);
-                default:
+                case !(key !== CTRL && key !== ALT && key !== SHIFT && key !== OS_LEFT && key !== OS_RIGHT && key !== TAB):
                   $valueInput.val("");
                   $target = $(event.target);
                   selectionIndicatorTarget($target).removeClass("has-selection");
                   searchTerm = $.trim($target.val());
                   if (searchTerm.length >= minimumSearchTermLength) {
-                    return suggestFunction(searchTerm, populateSuggestions(_this));
+                    markMatchRegExp = buildMarkerRegExp(searchTerm);
+                    return suggestFunction(searchTerm, populateSuggestions(_this, markMatchRegExp));
                   } else {
                     return removeSuggestions(_this);
                   }

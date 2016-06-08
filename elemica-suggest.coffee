@@ -60,6 +60,14 @@ elemicaSuggest 0.9.2-SNAPSHOT
       TAB = 9
       BACKSPACE = 8
 
+      SHIFT = 16
+      CTRL = 17
+      ALT = 18
+      OS_LEFT = 91
+      OS_RIGHT = 92
+
+      NON_PRINTALBE_KEYS = [SHIFT, CTRL, ALT, OS_LEFT, OS_RIGHT, TAB]
+
       # This function returns true if selection box is active
       # and user is selecting one of the options
       isSelectingSuggestion = -> $(".suggestions").is(":visible")
@@ -131,6 +139,9 @@ elemicaSuggest 0.9.2-SNAPSHOT
         currentIndex = 0
 
         while latestMatch = markerRegExp.exec(textToMark)
+          # If we have a zero-width match, bail before we infini-loop.
+          break if latestMatch[0].length == 0
+
           prefix = textToMark.substring(currentIndex, latestMatch.index)
 
           matches =
@@ -139,7 +150,7 @@ elemicaSuggest 0.9.2-SNAPSHOT
                 .addClass('match')
                 .text(latestMatch[i])
 
-          currentIndex = latestMatch.index + latestMatch[0].length
+          currentIndex = latestMatch.index + Math.max(latestMatch[0].length, 1)
 
           markedContent.push document.createTextNode(prefix)
           markedContent.push.apply markedContent, matches
@@ -227,7 +238,11 @@ elemicaSuggest 0.9.2-SNAPSHOT
               afterSelect(null) if originalValue != ""
 
         $(this).on 'keydown', (event) =>
-          if event.which == UP_ARROW || event.which == DOWN_ARROW
+          key = event.which
+          ctrlPressed = event.ctrlKey
+
+          if key is UP_ARROW || key is DOWN_ARROW ||
+             (ctrlPressed && (key is KEY_P || key is KEY_N))
             event.preventDefault()
           else if event.which == ENTER && isSelectingSuggestion()
             event.preventDefault()
@@ -249,7 +264,8 @@ elemicaSuggest 0.9.2-SNAPSHOT
               highlightNext(this)
             when key is ENTER
               selectHighlighted(this)
-            else
+            # Ignore other non-printable keys.
+            when key not in NON_PRINTALBE_KEYS
               $valueInput.val("")
               $target = $(event.target)
               selectionIndicatorTarget($target).removeClass("has-selection")
