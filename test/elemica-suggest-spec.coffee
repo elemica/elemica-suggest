@@ -133,6 +133,22 @@ describe 'Suggest', ->
 
     $containerDiv.find(".suggestions .active").trigger('element-selected')
 
+  it 'should render suggestion after paste a value', (done) ->
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+
+    $input = $("<input />").elemicaSuggest
+      suggestFunction: suggestFunction
+      afterSelect: (suggestion) ->
+        suggestion.display.should.equal("suggestion 1")
+        suggestion.value.should.equal("suggestion 1")
+        done()
+
+    $containerDiv = $("<div />").append($input)
+    $input.val('bacon').trigger('paste')
+
+    $containerDiv.find(".suggestions .active").trigger('element-selected')
+
   it 'should invoke afterSelect with the selected suggestion after an identical selection is made', (done) ->
     firstSuggestion = undefined
     invocationCount = 0
@@ -338,6 +354,8 @@ describe 'Suggest when handling keyboard shortcuts', ->
     triggerKeyUp $input, 16
     triggerKeyUp $input, 17
     triggerKeyUp $input, 18
+    triggerKeyUp $input, 37
+    triggerKeyUp $input, 39
     triggerKeyUp $input, 91
     triggerKeyUp $input, 92
 
