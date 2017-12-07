@@ -54,7 +54,9 @@ elemicaSuggest 0.9.2
     elemicaSuggest: (options = {}) ->
       KEY_N = 78
       KEY_P = 80
+      LEFT_ARROW = 37
       UP_ARROW = 38
+      RIGHT_ARROW = 39
       DOWN_ARROW = 40
       ENTER = 13
       TAB = 9
@@ -66,7 +68,7 @@ elemicaSuggest 0.9.2
       OS_LEFT = 91
       OS_RIGHT = 92
 
-      NON_PRINTALBE_KEYS = [SHIFT, CTRL, ALT, OS_LEFT, OS_RIGHT, TAB]
+      NON_PRINTALBE_KEYS = [SHIFT, CTRL, ALT, OS_LEFT, OS_RIGHT, TAB, LEFT_ARROW, RIGHT_ARROW]
 
       # This function returns true if selection box is active
       # and user is selecting one of the options
@@ -220,6 +222,19 @@ elemicaSuggest 0.9.2
 
         afterSuggest()
 
+      handleUserInput = (that, event) ->
+        $valueInput.val("")
+        $target = $(event.target)
+        selectionIndicatorTarget($target).removeClass("has-selection")
+        searchTerm = $.trim($target.val())
+
+        if searchTerm.length >= minimumSearchTermLength
+          markMatchRegExp = buildMarkerRegExp(searchTerm)
+
+          suggestFunction searchTerm, populateSuggestions(that, markMatchRegExp)
+        else
+          removeSuggestions(that)
+
       @each ->
         $(this).attr 'autocomplete', 'off'
 
@@ -266,15 +281,9 @@ elemicaSuggest 0.9.2
               selectHighlighted(this)
             # Ignore other non-printable keys.
             when key not in NON_PRINTALBE_KEYS
-              $valueInput.val("")
-              $target = $(event.target)
-              selectionIndicatorTarget($target).removeClass("has-selection")
-              searchTerm = $.trim($target.val())
+              handleUserInput(this, event)
 
-              if searchTerm.length >= minimumSearchTermLength
-                markMatchRegExp = buildMarkerRegExp(searchTerm)
+        $(this).on 'paste', (event) =>
+          handleUserInput(this, event)
 
-                suggestFunction searchTerm, populateSuggestions(this, markMatchRegExp)
-              else
-                removeSuggestions(this)
 )(jQuery)
