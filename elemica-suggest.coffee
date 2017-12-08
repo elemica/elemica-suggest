@@ -284,6 +284,17 @@ elemicaSuggest 0.9.2
               handleUserInput(this, event)
 
         $(this).on 'paste', (event) =>
+          # Stop data actually being pasted into div
+          event.stopPropagation()
+          event.preventDefault()
+
+          # Get pasted data via clipboard API
+          clipboardData = event.clipboardData || window.clipboardData;
+          pastedData = clipboardData.getData('Text');
+
+          $target = $(event.target)
+          $target.val(pastedData)
+          
           handleUserInput(this, event)
 
 )(jQuery)
