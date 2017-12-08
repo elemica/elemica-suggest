@@ -1,7 +1,8 @@
 chai = require 'chai'
 assert = require("assert")
-jsdom = require 'jsdom'
-jsdomWindow = jsdom.jsdom().defaultView
+jsdom = require("jsdom");
+{ JSDOM } = jsdom;
+jsdomWindow = new JSDOM().window
 jQuery = require('jquery')(jsdomWindow)
 $ = jQuery
 
