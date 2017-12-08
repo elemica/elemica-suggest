@@ -10,5 +10,8 @@
     "dist": "node_modules/coffeescript/bin/coffee -o dist elemica-suggest.coffee",
     "pretest": "npm run-script dist",
     "test": "node_modules/mocha/bin/mocha --compilers coffee:coffeescript/register -u tdd -R spec"
+  },
+  "engines": {
+    "node": "8.9.2"
   }
 }
