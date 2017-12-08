@@ -289,7 +289,7 @@ elemicaSuggest 0.9.2
           event.preventDefault()
 
           # Get pasted data via clipboard API
-          clipboardData = event.clipboardData || window.clipboardData;
+          clipboardData = event.originalEvent?.clipboardData || window.clipboardData;
           pastedData = clipboardData.getData('Text');
 
           $target = $(event.target)
