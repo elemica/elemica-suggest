@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "lts/8"
+  - "lts/v8.9.2"
 notifications:
   email: false
   flowdock: 336766039cb15d4350f94183eb1a7e72
