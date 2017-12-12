@@ -68,7 +68,7 @@ elemicaSuggest 0.9.2
       OS_LEFT = 91
       OS_RIGHT = 92
 
-      NON_PRINTALBE_KEYS = [SHIFT, CTRL, ALT, OS_LEFT, OS_RIGHT, TAB, LEFT_ARROW, RIGHT_ARROW]
+      NON_PRINTABLE_KEYS = [SHIFT, CTRL, ALT, OS_LEFT, OS_RIGHT, TAB, LEFT_ARROW, RIGHT_ARROW]
 
       # This function returns true if selection box is active
       # and user is selecting one of the options
@@ -280,7 +280,7 @@ elemicaSuggest 0.9.2
             when key is ENTER
               selectHighlighted(this)
             # Ignore other non-printable keys.
-            when key not in NON_PRINTALBE_KEYS
+            when key not in NON_PRINTABLE_KEYS
               handleUserInput(this, event)
 
         $(this).on 'paste', (event) =>
