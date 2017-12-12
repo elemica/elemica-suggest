@@ -1,9 +1,21 @@
 chai = require 'chai'
 assert = require("assert")
-jsdom = require 'jsdom'
-jsdomWindow = jsdom.jsdom().defaultView
+jsdom = require("jsdom");
+{ JSDOM } = jsdom;
+jsdomWindow = new JSDOM().window
 jQuery = require('jquery')(jsdomWindow)
 $ = jQuery
+
+clipboard = undefined
+clipboardData =
+  setData: (text) ->
+    clipboard = text
+    
+  getData: (_) ->
+    clipboard
+  
+window = jsdomWindow
+window.clipboardData = clipboardData
 document = jsdomWindow.document
 fs = require 'fs'
 
@@ -130,6 +142,24 @@ describe 'Suggest', ->
 
     $containerDiv = $("<div />").append($input)
     $input.val('bacon').trigger('keyup')
+
+    $containerDiv.find(".suggestions .active").trigger('element-selected')
+
+  it 'should render suggestion after paste a value', (done) ->
+    suggestFunction = (searchTerm, populateFn) ->
+      populateFn([{display: 'suggestion 1', value: 'suggestion 1'}, {display: 'suggestion 2', value: 'suggestion 2'}])
+
+    $input = $("<input />").elemicaSuggest
+      suggestFunction: suggestFunction
+      afterSelect: (suggestion) ->
+        suggestion.display.should.equal("suggestion 1")
+        suggestion.value.should.equal("suggestion 1")
+        done()
+
+    $containerDiv = $("<div />").append($input)
+    # simulate user CMD+C
+    window.clipboardData.setData('Text', 'bacon')
+    $input.trigger('paste')
 
     $containerDiv.find(".suggestions .active").trigger('element-selected')
 
@@ -338,6 +368,8 @@ describe 'Suggest when handling keyboard shortcuts', ->
     triggerKeyUp $input, 16
     triggerKeyUp $input, 17
     triggerKeyUp $input, 18
+    triggerKeyUp $input, 37
+    triggerKeyUp $input, 39
     triggerKeyUp $input, 91
     triggerKeyUp $input, 92
 

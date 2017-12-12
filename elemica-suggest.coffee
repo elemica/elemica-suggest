@@ -1,5 +1,5 @@
 ###
-elemicaSuggest 0.9.2
+elemicaSuggest 0.9.3-SNAPSHOT
 (c)2014 Elemica - Licensed under the terms of the Apache 2.0 License.
 ###
 ##
@@ -54,7 +54,9 @@ elemicaSuggest 0.9.2
     elemicaSuggest: (options = {}) ->
       KEY_N = 78
       KEY_P = 80
+      LEFT_ARROW = 37
       UP_ARROW = 38
+      RIGHT_ARROW = 39
       DOWN_ARROW = 40
       ENTER = 13
       TAB = 9
@@ -66,7 +68,7 @@ elemicaSuggest 0.9.2
       OS_LEFT = 91
       OS_RIGHT = 92
 
-      NON_PRINTALBE_KEYS = [SHIFT, CTRL, ALT, OS_LEFT, OS_RIGHT, TAB]
+      NON_PRINTABLE_KEYS = [SHIFT, CTRL, ALT, OS_LEFT, OS_RIGHT, TAB, LEFT_ARROW, RIGHT_ARROW]
 
       # This function returns true if selection box is active
       # and user is selecting one of the options
@@ -220,6 +222,19 @@ elemicaSuggest 0.9.2
 
         afterSuggest()
 
+      handleUserInput = (that, event) ->
+        $valueInput.val("")
+        $target = $(event.target)
+        selectionIndicatorTarget($target).removeClass("has-selection")
+        searchTerm = $.trim($target.val())
+
+        if searchTerm.length >= minimumSearchTermLength
+          markMatchRegExp = buildMarkerRegExp(searchTerm)
+
+          suggestFunction searchTerm, populateSuggestions(that, markMatchRegExp)
+        else
+          removeSuggestions(that)
+
       @each ->
         $(this).attr 'autocomplete', 'off'
 
@@ -265,16 +280,21 @@ elemicaSuggest 0.9.2
             when key is ENTER
               selectHighlighted(this)
             # Ignore other non-printable keys.
-            when key not in NON_PRINTALBE_KEYS
-              $valueInput.val("")
-              $target = $(event.target)
-              selectionIndicatorTarget($target).removeClass("has-selection")
-              searchTerm = $.trim($target.val())
+            when key not in NON_PRINTABLE_KEYS
+              handleUserInput(this, event)
 
-              if searchTerm.length >= minimumSearchTermLength
-                markMatchRegExp = buildMarkerRegExp(searchTerm)
+        $(this).on 'paste', (event) =>
+          # Stop data actually being pasted into div
+          event.stopPropagation()
+          event.preventDefault()
 
-                suggestFunction searchTerm, populateSuggestions(this, markMatchRegExp)
-              else
-                removeSuggestions(this)
+          # Get pasted data via clipboard API
+          clipboardData = event.originalEvent?.clipboardData || window.clipboardData;
+          pastedData = clipboardData.getData('Text');
+
+          $target = $(event.target)
+          $target.val(pastedData)
+          
+          handleUserInput(this, event)
+
 )(jQuery)

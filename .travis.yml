@@ -1,6 +1,4 @@
 language: node_js
-node_js:
-  - "0.12"
 notifications:
   email: false
   flowdock: 336766039cb15d4350f94183eb1a7e72
