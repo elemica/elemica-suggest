@@ -173,3 +173,20 @@ $ npm run-script dist
 
 The dist script is run automatically when you invoke test, and because you're running tests
 all the time, that means you should rarely, if ever, need to invoke dist directly, right?
+
+## Release process
+
+To release a new version of `elemica-suggest` follow the below steps:
+
+1. fetch and checkout the `master` branch
+2. remove `-SNAPSHOT` suffix inside `elemica-suggest.coffee`
+3. prepare a dist running `npm run-script dist`
+4. commit both changed files, i.e. `elemica-suggesr.coffee` & `dist/elemica-suggest.js` with a message `Prepares release X.X.X`
+5. tag the branch using `git tag X.X.X`
+6. edit `elemica-suggest.coffee` and bumps the development version plus add suffix `-SNAPSHOT`
+7. build a new dist using `npm run-script dist`
+8. commit both modified files with a message `Prepares for a new development cycle`
+9. push everything to Github
+10. open the [releases](https://github.com/elemica/elemica-suggest/releases) page and add a new release based on the tag
+11. use `elemica-suggest.js` from the zip to update the `mercury` project or any other project using `elemica-suggest`
+12. enjoy!
