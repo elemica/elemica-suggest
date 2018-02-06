@@ -181,7 +181,7 @@ To release a new version of `elemica-suggest` follow the below steps:
 1. fetch and checkout the `master` branch
 2. remove `-SNAPSHOT` suffix inside `elemica-suggest.coffee`
 3. prepare a dist running `npm run-script dist`
-4. commit both changed files, i.e. `elemica-suggesr.coffee` & `dist/elemica-suggest.js` with a message `Prepares release X.X.X`
+4. commit both changed files, i.e. `elemica-suggest.coffee` & `dist/elemica-suggest.js` with a message `Prepares release X.X.X`
 5. tag the branch using `git tag X.X.X`
 6. edit `elemica-suggest.coffee` and bumps the development version plus add suffix `-SNAPSHOT`
 7. build a new dist using `npm run-script dist`
