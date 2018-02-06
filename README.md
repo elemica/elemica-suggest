@@ -188,5 +188,5 @@ To release a new version of `elemica-suggest` follow the below steps:
 8. commit both modified files with a message `Prepares for a new development cycle`
 9. push everything to Github using `git push --tags`
 10. open the [releases](https://github.com/elemica/elemica-suggest/releases) page and add a new release based on the tag
-11. use `elemica-suggest.js` from the zip to update the `mercury` project or any other project using `elemica-suggest`
+11. use `elemica-suggest.js` from the zip to update your project
 12. enjoy!
